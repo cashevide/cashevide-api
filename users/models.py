@@ -12,6 +12,11 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+    @property
+    def tier(self):
+        if hasattr(self, "subscription"):
+            return self.subscription.tier  # type:ignore
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(

@@ -21,9 +21,9 @@ class Invoice(models.Model):
     client = models.ForeignKey(
         Client,
         on_delete=models.SET_NULL,
+        related_name="invoices",
         null=True,
         blank=True,
-        related_name="invoices",
     )
 
     name = models.CharField(max_length=255, blank=True)
@@ -32,6 +32,7 @@ class Invoice(models.Model):
     address = models.TextField(blank=True, default="")
 
     invoice_number = models.CharField(max_length=50, blank=True)
+
     status = models.CharField(
         max_length=20, choices=InvoiceStatus.choices, default=InvoiceStatus.DRAFT
     )
@@ -47,22 +48,39 @@ class Invoice(models.Model):
 
     amount_paid = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
 
-    def __str__(self):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "invoice_number"], name="unique_invoice_per_user"
+            )
+        ]
+
+    def __str__(self) -> str:
         return f"{self.invoice_number} - {self.name or 'Draft'}"
 
     def save(self, *args, **kwargs):
         self.clean()
+
         if not self.invoice_number:
-            last_invoice = Invoice.objects.filter(user=self.user).order_by("id").last()
-            if not last_invoice or not last_invoice.invoice_number.startswith("INV-"):
+            last_invoice = (
+                Invoice.objects.filter(
+                    user=self.user, invoice_number__startswith="INV-"
+                )
+                .order_by("id")
+                .last()
+            )
+            if not last_invoice:
                 self.invoice_number = "INV-0001"
             else:
-                last_number_str = last_invoice.invoice_number.split("-")[1]
-                new_number = int(last_number_str) + 1
-                self.invoice_number = f"INV-{new_number:04d}"
+                try:
+                    last_number_str = last_invoice.invoice_number.split("-")[1]
+                    new_number = int(last_number_str) + 1
+                    self.invoice_number = f"INV-{new_number:04d}"
+                except (IndexError, ValueError):
+                    self.invoice_number = "INV-0001"
 
         if self.client:
             if not self.name:
@@ -76,33 +94,33 @@ class Invoice(models.Model):
 
             if not self.address:
                 self.address = self.client.address
+
         super().save(*args, **kwargs)
 
-    def clean(self):
+    def clean(self) -> None:
         if not self.client and not self.name:
             raise ValidationError("Please select a client or provide a client name.")
 
     def update_financials(self):
-        items_sum = self.items.aggregate(total_sum=Sum("total"))["total_sum"] or 0.00
+        items_sum = self.items.aggregate(total_sum=Sum("total"))["total_sum"] or 0.00  # type:ignore
         self.subtotal = items_sum
 
         self.total_amount = self.subtotal - self.discount
 
-        payments_sum = (
-            self.payments.aggregate(paid_sum=Sum("amount"))["paid_sum"] or 0.00
+        payment_sum = (
+            self.payments.aggregate(paid_sum=Sum("amount"))["paid_sum"] or 0.00  # type:ignore
         )
-        self.amount_paid = payments_sum
+
+        self.amount_paid = payment_sum
 
         if self.amount_paid >= self.total_amount and self.total_amount > 0:
             self.status = self.InvoiceStatus.PAID
         elif self.amount_paid > 0:
             self.status = self.InvoiceStatus.PARTIALLY_PAID
+        elif self.total_amount > 0:
+            self.status = self.InvoiceStatus.UNPAID
         else:
-            if self.status in [
-                self.InvoiceStatus.PAID,
-                self.InvoiceStatus.PARTIALLY_PAID,
-            ]:
-                self.status = self.InvoiceStatus.UNPAID
+            self.status = self.InvoiceStatus.DRAFT
 
         self.save(update_fields=["subtotal", "total_amount", "amount_paid", "status"])
 
@@ -114,9 +132,8 @@ class InvoiceItem(models.Model):
         DAYS = "DAYS", "Days"
 
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name="items")
-
     product = models.ForeignKey(
-        Product, on_delete=models.SET_NULL, null=True, blank=True
+        Product, on_delete=models.SET_NULL, blank=True, null=True
     )
 
     title = models.CharField(max_length=255, blank=True)
@@ -125,7 +142,8 @@ class InvoiceItem(models.Model):
     unit_type = models.CharField(
         max_length=4, choices=UnitType.choices, default=UnitType.QUANTITY
     )
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
+
+    quantity = models.DecimalField(max_digits=12, decimal_places=2, default=1.00)
 
     unit_price = models.DecimalField(
         max_digits=12, decimal_places=2, blank=True, null=True
@@ -137,12 +155,11 @@ class InvoiceItem(models.Model):
         db_persist=True,
     )
 
-    def __str__(self):
-        return f"{self.title} (x{self.quantity})"
+    def __str__(self) -> str:
+        return f"{self.title}(x{self.quantity})"
 
     def save(self, *args, **kwargs):
         self.clean()
-
         if self.product:
             if not self.title:
                 self.title = self.product.title
@@ -162,12 +179,15 @@ class InvoiceItem(models.Model):
         invoice.update_financials()
         return result
 
-    def clean(self):
-        if not self.product and not self.title:
-            raise ValidationError("Please select a product or provide a title.")
+    def clean(self) -> None:
+        if not self.product:
+            if not self.title:
+                raise ValidationError("Please select a product or provide a title.")
 
-        if not self.product and self.unit_price is None:
-            raise ValidationError("Please select a product or provide a unit price.")
+            if self.unit_price is None:
+                raise ValidationError(
+                    "Please select a product or provide a unit price."
+                )
 
 
 class PaymentRecord(models.Model):
@@ -185,7 +205,7 @@ class PaymentRecord(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.invoice.invoice_number} - {self.amount} on {self.payment_date}"
 
     def save(self, *args, **kwargs):

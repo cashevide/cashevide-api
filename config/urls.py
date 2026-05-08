@@ -26,12 +26,19 @@ urlpatterns = [
     path("api/users/", include("users.urls")),
     path("api/", include("reviews.urls")),
     path("api/", include("demo.urls")),
+    path("api/", include("clients.urls")),
+    path("api/", include("catalog.urls")),
     # Swagger UI
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/schema/swagger-ui/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
+    ),
+    path(
+        "",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="root-swagger-ui",
     ),
 ]
 

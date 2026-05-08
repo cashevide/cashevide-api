@@ -79,11 +79,13 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "rest_framework_simplejwt.token_blacklist",
     "storages",
+    "django_filters",
     "users",
     "reviews.apps.ReviewsConfig",
     "invoices.apps.InvoicesConfig",
     "clients",
     "catalog",
+    "core",
     "demo",
     "django_cleanup.apps.CleanupConfig",
 ]
@@ -260,6 +262,8 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "10/minute", "user": "20/minute"},
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
     # Swagger ui
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }

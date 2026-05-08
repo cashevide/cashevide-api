@@ -18,7 +18,7 @@ from .schema import (
 )
 from .serializers import (
     ClientLookupSerializer,
-    ClientSerializer,
+    ReviewedClientSerializer,
     ReviewListSerializer,
     ReviewSerializer,
     TagSerializer,
@@ -42,9 +42,9 @@ class TagViewSet(viewsets.ModelViewSet):
 
 
 @CLIENT_VIEWSET_SCHEMA
-class ClientViewSet(viewsets.ModelViewSet):
+class ReviewedClientViewSet(viewsets.ModelViewSet):
     queryset = ReviewedClient.objects.all()
-    serializer_class = ClientSerializer
+    serializer_class = ReviewedClientSerializer
 
     def get_permissions(self):
         if self.action in ["create", "retrieve"]:
@@ -122,7 +122,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if not queryset.exists():
             return Response(
                 {
-                    "average_rating": 0,
+                    "avarage_rating": 0,
                     "total_reviews": 0,
                     "rating_distribution": {5: 0, 4: 0, 3: 0, 2: 0, 1: 0},
                     "tags_summary": [],

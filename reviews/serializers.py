@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Review, ReviewedClient, Tag
 
 
-class ClientSerializer(serializers.ModelSerializer):
+class ReviewedClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReviewedClient
         fields = ["id", "phone_number"]
@@ -68,7 +68,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
 class UserReviewListSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source="author.username")
     tags = TagSerializer(many=True)
-    client = ClientSerializer()
+    client = ReviewedClientSerializer()
 
     class Meta:
         model = Review

@@ -4,12 +4,35 @@ GET {{base_url}}/books/ HTTP/1.1
 Content-Type: application/json
 
 
+### GET Book
+
+GET {{base_url}}/books/aadu-jeevitham-1/ HTTP/1.1
+Content-Type: application/json
+
+
 ### POST Books
 
 POST {{base_url}}/books/ HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "Patti jeevitham",
+  "name": "Aadu jeevitham",
   "price": 2000
 }
+
+
+### PATCH Book
+
+PATCH {{base_url}}/books/aadu-jeevitham-1/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "is_active": false,
+  "price": 100
+}
+
+
+### DELETE Book
+
+DELETE {{base_url}}/books/aadu-jeevitham/ HTTP/1.1
+Content-Type: application/json

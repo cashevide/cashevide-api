@@ -1,6 +1,17 @@
+### POST Clients
+
+POST {{base_url}}/reviewed-clients/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "phone_number": "+919746469319"
+}
+
+
 ### GET Clients
 
-GET {{base_url}}/clients/ HTTP/1.1
+GET {{base_url}}/reviewed-clients/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

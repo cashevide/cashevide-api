@@ -20,6 +20,7 @@ from .schema import (
     PASSWORD_RESET_OTP_VERIFICATION_SCHEMA,
     PASSWORD_RESET_SCHEMA,
     TOKEN_REFRESH_SCHEMA,
+    USER_BUSINESS_PROFILE_SCHEMA,
     USER_CHECK_FIELD_SCHEMA,
     USER_DELETE_SCHEMA,
     USER_LOGIN_SCHEMA,
@@ -139,6 +140,7 @@ class UserProfileView(RetrieveUpdateAPIView):
         return profile
 
 
+@USER_BUSINESS_PROFILE_SCHEMA
 class UserBusinessProfileView(RetrieveUpdateAPIView):
     serializer_class = UserBusinessProfileSerializer
     permission_classes = [IsAuthenticated]

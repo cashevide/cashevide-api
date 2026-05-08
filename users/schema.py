@@ -1,24 +1,25 @@
-from rest_framework import serializers
+from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiResponse,
     extend_schema,
     extend_schema_view,
     inline_serializer,
-    OpenApiParameter,
-    OpenApiResponse,
 )
-from drf_spectacular.types import OpenApiTypes
+from rest_framework import serializers
+
 from .serializers import (
-    PasswordResetSerializer,
-    SignupOTPRequestSerializer,
-    SignupOTPVerificationSerializer,
-    UserDetailSerializer,
     PasswordChangeSerializer,
     PasswordResetOTPRequestSerializer,
+    PasswordResetSerializer,
+    PasswordResetVerificationSerializer,
+    SignupOTPRequestSerializer,
+    SignupOTPVerificationSerializer,
+    UserBusinessProfileSerializer,
+    UserDetailSerializer,
     UserLoginSerializer,
     UserProfileSerializer,
-    PasswordResetVerificationSerializer,
 )
-
 
 OTP_REQUEST_SCHEMA = extend_schema_view(
     post=extend_schema(
@@ -155,6 +156,26 @@ USER_PROFILE_SCHEMA = extend_schema_view(
         summary="Update User Profile",
         description="Updates the entire profile of the user.",
         request={"multipart/form-data": UserProfileSerializer},
+    ),
+)
+
+USER_BUSINESS_PROFILE_SCHEMA = extend_schema_view(
+    get=extend_schema(
+        tags=["Users"],
+        summary="Get User Business Profile",
+        description="Retrieves the business profile information of the currently authenticated user.",
+    ),
+    patch=extend_schema(
+        tags=["Users"],
+        summary="Partial Update Business Profile",
+        description="Updates specific fields of the user's business profile.",
+        request={"multipart/form-data": UserBusinessProfileSerializer},
+    ),
+    put=extend_schema(
+        tags=["Users"],
+        summary="Update User Business Profile",
+        description="Updates the entire business profile of the user.",
+        request={"multipart/form-data": UserBusinessProfileSerializer},
     ),
 )
 
