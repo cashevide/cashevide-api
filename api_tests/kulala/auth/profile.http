@@ -1,0 +1,28 @@
+### GET Profile
+
+GET {{base_url}}/users/profile/me/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### GET Business Profile
+
+GET {{base_url}}/users/business-profile/me/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### PUT Business Profile
+
+PUT {{base_url}}/users/business-profile/me/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "address": "string",
+  "business_name": "",
+  "currency": "INR",
+  "gst_number": "string",
+  "phone_number": "string",
+  "vat_number": "string"
+}

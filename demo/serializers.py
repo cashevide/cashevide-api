@@ -8,9 +8,9 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = [
             "id",
-            "slug",
             "name",
             "price",
+            "slug",
             "created_at",
             "updated_at",
             "is_active",

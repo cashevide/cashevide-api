@@ -25,7 +25,7 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(
         upload_to="profile_pictures/", null=True, blank=True
     )
-    full_name = models.CharField(max_length=200)
+    full_name = models.CharField(max_length=200, default="")
     phone_number = models.CharField(max_length=20, blank=True, default="")
     job_title = models.CharField(max_length=100, blank=True, default="")
     referral_code = models.CharField(max_length=50, unique=True, db_index=True)
@@ -48,14 +48,14 @@ class UserBusinessProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="business_profile",
     )
-    business_name = models.CharField(max_length=255)
+    business_name = models.CharField(max_length=255, default="")
     logo = models.ImageField(upload_to="logos/", null=True, blank=True)
     gst_number = models.CharField(max_length=15, blank=True, default="")
     vat_number = models.CharField(max_length=15, blank=True, default="")
-    address = models.TextField()
-    phone_number = models.CharField(max_length=20)
+    address = models.TextField(default="")
+    phone_number = models.CharField(max_length=20, default="")
     website = models.URLField(blank=True, default="")
-    default_currency = models.CharField(max_length=3, default="INR")
+    currency = models.CharField(max_length=3, default="")
 
     def __str__(self):
         return f"{self.user.email} - {self.business_name}"
@@ -63,9 +63,9 @@ class UserBusinessProfile(models.Model):
 
 class UserSubscription(models.Model):
     class Tier(models.TextChoices):
-        SILVER = "SILVER", "Silver"
-        GOLD = "GOLD", "Gold"
-        PLATINUM = "PLATINUM", "Platinum"
+        COMMUNITY = "COMMUNITY", "Community"
+        INDIVIDUAL = "INDIVIDUAL", "Individual"
+        ENTERPRISE = "ENTERPRISE", "Enterprise"
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -73,7 +73,7 @@ class UserSubscription(models.Model):
         related_name="subscription",
     )
 
-    tier = models.CharField(max_length=20, choices=Tier.choices, default=Tier.SILVER)
+    tier = models.CharField(max_length=20, choices=Tier.choices, default=Tier.COMMUNITY)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

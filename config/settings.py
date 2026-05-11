@@ -305,12 +305,16 @@ SPECTACULAR_SETTINGS = {
             "description": "APIs for managing review tags. These tags (e.g., 'Good Service', 'High Price') are pre-defined by the admin and selected by users during the review process.",
         },
         {
-            "name": "Clients",
+            "name": "Reviewed Clients",
             "description": "APIs for managing clients (businesses/entities) that are being reviewed. Users can create new clients or view existing ones, while administrative tasks are restricted to superusers.",
         },
         {
             "name": "Reviews",
             "description": "APIs for posting and managing reviews. Includes general client reviews and user-specific review management.",
+        },
+        {
+            "name": "Clients",
+            "description": "APIs for managing the user's personal clients used for generating invoices. Includes adding, editing, soft-deleting, and tracking usage limits.",
         },
     ],
 }

@@ -28,6 +28,6 @@ Authorization: Bearer {{token}}
 
 > {%
 
-  client.global.set("client_id", response.body.client_id )
+  client.global.set("reviewed_client_id", response.body.client_id )
 
 %}

@@ -26,32 +26,35 @@ TAG_VIEWSET_SCHEMA = extend_schema_view(
 
 CLIENT_VIEWSET_SCHEMA = extend_schema_view(
     list=extend_schema(
-        tags=["Clients"],
+        tags=["Reviewed Clients"],
         summary="List all clients (Superuser only)",
         description="Only accessible by superusers to see the full list of clients.",
     ),
     retrieve=extend_schema(
-        tags=["Clients"],
+        tags=["Reviewed Clients"],
         summary="Get client details",
         description="Fetch specific details of a client by their ID. Accessible by any authenticated user.",
     ),
     create=extend_schema(
-        tags=["Clients"],
+        tags=["Reviewed Clients"],
         summary="Create a new client",
         description="Allow users to add a new client (business) if it's not already in the system before they write a review.",
     ),
     update=extend_schema(
-        tags=["Clients"], summary="Update client details (Superuser only)"
+        tags=["Reviewed Clients"], summary="Update client details (Superuser only)"
     ),
     partial_update=extend_schema(
-        tags=["Clients"], summary="Partially update client details (Superuser only)"
+        tags=["Reviewed Clients"],
+        summary="Partially update client details (Superuser only)",
     ),
-    destroy=extend_schema(tags=["Clients"], summary="Delete a client (Superuser only)"),
+    destroy=extend_schema(
+        tags=["Reviewed Clients"], summary="Delete a client (Superuser only)"
+    ),
 )
 
 CLIENT_LOOKUP_SCHEMA = extend_schema_view(
     post=extend_schema(
-        tags=["Clients"],
+        tags=["Reviewed Clients"],
         summary="Lookup Client ID by Phone Number",
         description="Search for a client's unique ID using their phone number. This ID is required to post a review for that specific client.",
         request=ClientLookupSerializer,

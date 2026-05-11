@@ -2,8 +2,12 @@ from rest_framework import serializers
 
 from clients.models import Client
 from core.utils import check_creation_limit
+from users.models import UserSubscription
 
-CLIENT_CREATION_LIMITS: dict[str, int] = {"SILVER": 10, "GOLD": 100}
+CLIENT_CREATION_LIMITS: dict[str, int] = {
+    UserSubscription.Tier.COMMUNITY: 10,
+    UserSubscription.Tier.INDIVIDUAL: 100,
+}
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -16,11 +20,12 @@ class ClientSerializer(serializers.ModelSerializer):
             "email",
             "phone",
             "address",
+            "slug",
             "created_at",
             "updated_at",
             "is_active",
         ]
-        read_only_fields = ["user", "created_at", "updated_at"]
+        read_only_fields = ["user", "slug", "created_at", "updated_at"]
 
     def create(self, validated_data):
         user = self.context.get("request").user  # type:ignore

@@ -23,7 +23,7 @@ Content-Type: application/json
 
 ### PATCH Book
 
-PATCH {{base_url}}/books/aadu-jeevitham-1/ HTTP/1.1
+PATCH {{base_url}}/books/aadu-jeevitham/ HTTP/1.1
 Content-Type: application/json
 
 {

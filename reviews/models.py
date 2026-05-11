@@ -5,10 +5,12 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from core.models import BaseModel
+
 from .utils import hash_phone_number
 
 
-class ReviewedClient(models.Model):
+class ReviewedClient(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone_number = models.CharField(max_length=100, unique=True)
 
@@ -31,7 +33,7 @@ class ReviewedClient(models.Model):
         super().save(*args, **kwargs)
 
 
-class Tag(models.Model):
+class Tag(BaseModel):
     class TagCategory(models.TextChoices):
         POSITIVE = "POSITIVE", "Positive"
         NEGATIVE = "NEGATIVE", "Negative"
@@ -46,7 +48,7 @@ class Tag(models.Model):
         return self.name
 
 
-class Review(models.Model):
+class Review(BaseModel):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 
 def check_creation_limit(user, model_class, limits_dict: dict, item_name: str) -> None:
-    current_count = model_class.objects.filter(user=user).count()
+    current_count = model_class.objects.filter(user=user, is_active=True).count()
     user_tier = user.tier
 
     if user_tier in limits_dict:

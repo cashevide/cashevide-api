@@ -134,6 +134,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "credit_points",
         ]
 
+        extra_kwargs = {
+            "full_name": {"required": True, "allow_blank": False},
+        }
+
 
 class UserBusinessProfileSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source="user.id", read_only=True)
@@ -149,8 +153,15 @@ class UserBusinessProfileSerializer(serializers.ModelSerializer):
             "address",
             "phone_number",
             "website",
-            "default_currency",
+            "currency",
         ]
+
+        extra_kwargs = {
+            "business_name": {"required": True, "allow_blank": False},
+            "address": {"required": True, "allow_blank": False},
+            "phone_number": {"required": True, "allow_blank": False},
+            "currency": {"required": True, "allow_blank": False},
+        }
 
 
 class UserLoginSerializer(serializers.Serializer):

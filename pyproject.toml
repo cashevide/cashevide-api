@@ -29,6 +29,7 @@ dev = [
   "django-stubs-ext>=5.2.9",
   "django-types>=0.22.0",
   "djangorestframework-stubs>=3.16.7",
+  "requests>=2.33.1",
   "ruff>=0.15.7",
 ]
 

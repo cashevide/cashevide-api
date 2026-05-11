@@ -5,7 +5,7 @@ from core.utils import generate_unique_slug
 
 
 class Book(BaseModel):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default="")
     price = models.PositiveSmallIntegerField(blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True)
 
