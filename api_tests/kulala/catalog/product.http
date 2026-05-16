@@ -1,6 +1,13 @@
-### GET Product
+### GET Products
 
 GET {{base_url}}/products/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### Retrive Product
+
+GET {{base_url}}/products/social-media-poster/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -20,5 +27,12 @@ Authorization: Bearer {{token}}
 ### DELETE Product
 
 DELETE {{base_url}}/products/social-media-poster/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### GET Product Usage
+
+GET {{base_url}}/products/usage/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}

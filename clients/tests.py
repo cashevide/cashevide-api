@@ -15,7 +15,6 @@ class ClientTests(APITestCase):
             password="CashevideStrong@2026",
         )
         self.client.force_authenticate(user=self.user)
-        self.url = reverse("client-list")
 
         UserSubscription.objects.create(
             user=self.user, tier=UserSubscription.Tier.COMMUNITY

@@ -1,9 +1,11 @@
 from core.views import BaseViewSet
 
 from .models import Product
+from .schema import PRODUCT_VIEWSET_SCHEMA
 from .serializers import PRODUCT_CREATION_LIMITS, ProductSerializer
 
 
+@PRODUCT_VIEWSET_SCHEMA
 class ProductViewSet(BaseViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer

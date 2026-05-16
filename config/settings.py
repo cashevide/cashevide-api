@@ -316,6 +316,10 @@ SPECTACULAR_SETTINGS = {
             "name": "Clients",
             "description": "APIs for managing the user's personal clients used for generating invoices. Includes adding, editing, soft-deleting, and tracking usage limits.",
         },
+        {
+            "name": "Catalog",
+            "description": "APIs for managing the user's product catalog. Includes creating, editing, soft-deleting products, and tracking product usage limits.",
+        },
     ],
 }
 
