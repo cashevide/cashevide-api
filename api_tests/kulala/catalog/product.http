@@ -1,0 +1,24 @@
+### GET Product
+
+GET {{base_url}}/products/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### POST Product
+
+POST {{base_url}}/products/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Social Media Poster",
+  "unit_price": "3000"
+}
+
+
+### DELETE Product
+
+DELETE {{base_url}}/products/social-media-poster/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}

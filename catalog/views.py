@@ -1,17 +1,19 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+from core.views import BaseViewSet
 
 from .models import Product
-from .serializers import ProductSerializer
+from .serializers import PRODUCT_CREATION_LIMITS, ProductSerializer
 
 
-class ProductViewSet(ModelViewSet):
+class ProductViewSet(BaseViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    limits_dict = PRODUCT_CREATION_LIMITS
+    item_name = "product"
 
-    def get_queryset(self):
-        return Product.objects.filter(user=self.request.user)
+    filterset_fields = ["title"]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    search_fields = ["title", "unit_price"]
+
+    ordering_fields = ["title", "created_at"]
+
+    ordering = ["-created_at"]

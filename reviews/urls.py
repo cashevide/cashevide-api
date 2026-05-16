@@ -12,18 +12,20 @@ from .views import (
 router = DefaultRouter()
 router.register(r"reviewed-clients", ReviewedClientViewSet)
 router.register(r"tags", TagViewSet)
-router.register(r"my-reviews", UserReviewViewSet, basename="my-reviews")
+router.register(r"my-reviews", UserReviewViewSet, basename="my_reviews")
 
 urlpatterns = [
     path("", include(router.urls)),
     path("client-lookup/", ClientLookupView.as_view(), name="client_lookup"),
     path(
         "reviewed-client/<uuid:client_id>/reviews/",
-        ReviewViewSet.as_view({"get": "list", "post": "create"}, name="client_review"),
+        ReviewViewSet.as_view({"get": "list", "post": "create"}),
+        name="client_review",
     ),
     path(
         "reviewed-client/<uuid:client_id>/reviews/summary/",
-        ReviewViewSet.as_view({"get": "summary"}, name="client_review_summary"),
+        ReviewViewSet.as_view({"get": "summary"}),
+        name="client_review_summary",
     ),
     path(
         "reviewed-client/<uuid:client_id>/reviews/<int:pk>/",
@@ -34,7 +36,7 @@ urlpatterns = [
                 "patch": "partial_update",
                 "delete": "destroy",
             },
-            name="client_detail",
         ),
+        name="client_detail",
     ),
 ]

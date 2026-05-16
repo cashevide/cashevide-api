@@ -19,9 +19,10 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "ratings": 1,
+  "ratings": 5,
   "tags": [
-    14,
-    16
+    2,
+    4,
+    5
   ]
 }

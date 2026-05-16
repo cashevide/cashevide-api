@@ -6,7 +6,8 @@ from .models import Review, ReviewedClient, Tag
 class ReviewedClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReviewedClient
-        fields = ["id", "phone_number"]
+        fields = ["id", "phone_number", "created_at", "updated_at", "is_active"]
+        read_only_fields = ["created_at", "updated_at"]
 
 
 class ClientLookupSerializer(serializers.Serializer):
@@ -16,14 +17,32 @@ class ClientLookupSerializer(serializers.Serializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ["id", "name", "category", "group"]
+        fields = [
+            "id",
+            "name",
+            "category",
+            "group",
+            "created_at",
+            "updated_at",
+            "is_active",
+        ]
+        read_only_fields = ["created_at", "updated_at"]
 
 
-class ReviewSerializer(serializers.ModelSerializer):
+class BaseReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = ["id", "author", "tags", "ratings", "client"]
-        read_only_fields = ["author", "client"]
+        fields = [
+            "id",
+            "author",
+            "ratings",
+            "tags",
+            "client",
+            "created_at",
+            "updated_at",
+            "is_active",
+        ]
+        read_only_fields = ["author", "client", "created_at", "updated_at"]
 
     def validate_tags(self, tags):
         groups = []
@@ -39,6 +58,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         return tags
 
+
+class ReviewSerializer(BaseReviewSerializer):
     def validate(self, attrs):
         request = self.context["request"]
         view = self.context["view"]
@@ -56,13 +77,26 @@ class ReviewSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class UserReviewSerializer(BaseReviewSerializer):
+    pass
+
+
 class ReviewListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = serializers.ReadOnlyField(source="author.username")
 
     class Meta:
         model = Review
-        fields = ["id", "tags", "ratings", "author"]
+        fields = [
+            "id",
+            "ratings",
+            "tags",
+            "author",
+            "created_at",
+            "updated_at",
+            "is_active",
+        ]
+        read_only_fields = ["created_at", "updated_at"]
 
 
 class UserReviewListSerializer(serializers.ModelSerializer):
@@ -72,4 +106,4 @@ class UserReviewListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ["id", "author", "tags", "client"]
+        fields = ["id", "author", "ratings", "tags", "client"]

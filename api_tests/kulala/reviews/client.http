@@ -5,13 +5,27 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "phone_number": "+919746469319"
+  "phone_number": "+919746469318"
 }
 
 
 ### GET Clients
 
 GET {{base_url}}/reviewed-clients/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### Retrieve Client
+
+GET {{base_url}}/reviewed-clients/{{reviewed_client_id}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### DELETE Client
+
+DELETE {{base_url}}/reviewed-clients/{{reviewed_client_id}}/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -23,7 +37,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "phone_number": "+919746469319"
+  "phone_number": "+919746469318"
 }
 
 > {%

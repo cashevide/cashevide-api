@@ -1,0 +1,51 @@
+### GET Reviews
+
+GET {{base_url}}/my-reviews/ HTTP/1.1
+Consent-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### Retrive User Review
+
+GET {{base_url}}/my-reviews/2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### DELETE User Review
+
+DELETE {{base_url}}/my-reviews/1/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### PATCH User Review
+
+PATCH {{base_url}}/my-reviews/2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "ratings": 3,
+  "tags": [
+    2,
+    3,
+    6
+  ]
+}
+
+
+### POST User Review
+
+POST {{base_url}}/my-reviews/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "ratings": 3,
+  "tags": [
+    2,
+    3,
+    6
+  ]
+}

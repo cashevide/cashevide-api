@@ -23,6 +23,7 @@ from .serializers import (
     ReviewSerializer,
     TagSerializer,
     UserReviewListSerializer,
+    UserReviewSerializer,
 )
 from .utils import hash_phone_number
 
@@ -31,6 +32,7 @@ from .utils import hash_phone_number
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = None
 
     def get_permissions(self):
         if self.action == "list":
@@ -43,16 +45,20 @@ class TagViewSet(viewsets.ModelViewSet):
 
 @CLIENT_VIEWSET_SCHEMA
 class ReviewedClientViewSet(viewsets.ModelViewSet):
-    queryset = ReviewedClient.objects.all()
+    queryset = ReviewedClient.objects.all().order_by("-created_at")
     serializer_class = ReviewedClientSerializer
 
     def get_permissions(self):
-        if self.action in ["create", "retrieve"]:
+        if self.action in ["create"]:
             permission_classes = [IsAuthenticated]
         else:
             permission_classes = [IsSuperUser]
 
         return [permission() for permission in permission_classes]
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
 
 
 @CLIENT_LOOKUP_SCHEMA
@@ -102,7 +108,16 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         client_id = self.kwargs["client_id"]
-        return Review.objects.filter(client__id=client_id)
+        queryset = Review.objects.filter(
+            client__id=client_id, client__is_active=True
+        ).order_by("-created_at")
+
+        if self.request.user.is_authenticated and getattr(
+            self.request.user, "is_superuser", False
+        ):
+            return queryset
+
+        return queryset.filter(is_active=True)
 
     def get_serializer_class(self):
         if self.action in ["list", "retrieve"]:
@@ -115,6 +130,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
         return serializer.save(author=self.request.user, client=client)
 
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
+
     @action(detail=False, methods=["get"])
     def summary(self, request, client_id=None):
         queryset = self.get_queryset()
@@ -122,7 +141,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if not queryset.exists():
             return Response(
                 {
-                    "avarage_rating": 0,
+                    "average_rating": 0,
                     "total_reviews": 0,
                     "rating_distribution": {5: 0, 4: 0, 3: 0, 2: 0, 1: 0},
                     "tags_summary": [],
@@ -146,7 +165,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         )
 
         data = {
-            "avarage_rating": round(stats["avg_rating"], 1)
+            "average_rating": round(stats["avg_rating"], 1)
             if stats["avg_rating"]
             else 0,
             "total_reviews": stats["total"],
@@ -163,12 +182,14 @@ class UserReviewViewSet(viewsets.ModelViewSet):
     serializer_class = UserReviewListSerializer
 
     def get_queryset(self):
-        return Review.objects.filter(author=self.request.user)
+        return Review.objects.filter(
+            author=self.request.user, client__is_active=True
+        ).order_by("-created_at")
 
     def get_serializer_class(self):
         if self.action in ["list", "retrieve"]:
             return UserReviewListSerializer
-        return ReviewSerializer
+        return UserReviewSerializer
 
     def create(self, request, *args, **kwargs):
         return Response(
