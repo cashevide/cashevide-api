@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -5,9 +7,11 @@ from django.db.models import F, GeneratedField, Sum
 
 from catalog.models import Product
 from clients.models import Client
+from core.models import BaseModel
+from users.models import UserSubscription
 
 
-class Invoice(models.Model):
+class Invoice(BaseModel):
     class InvoiceStatus(models.TextChoices):
         DRAFT = "DRAFT", "Draft"
         UNPAID = "UNPAID", "Unpaid"
@@ -37,7 +41,7 @@ class Invoice(models.Model):
         max_length=20, choices=InvoiceStatus.choices, default=InvoiceStatus.DRAFT
     )
 
-    currency = models.CharField(max_length=3, default="INR")
+    currency = models.CharField(max_length=3, blank=True)
 
     issue_date = models.DateField(null=True, blank=True)
     due_date = models.DateField(null=True, blank=True)
@@ -48,8 +52,7 @@ class Invoice(models.Model):
 
     amount_paid = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    balance_due = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
     class Meta:
         constraints = [
@@ -63,6 +66,12 @@ class Invoice(models.Model):
 
     def save(self, *args, **kwargs):
         self.clean()
+
+        if not self.currency:
+            if hasattr(self, "user") and hasattr(self.user, "business_profile"):
+                self.currency = self.user.business_profile.currency
+            else:
+                self.currency = ""
 
         if not self.invoice_number:
             last_invoice = (
@@ -101,17 +110,33 @@ class Invoice(models.Model):
         if not self.client and not self.name:
             raise ValidationError("Please select a client or provide a client name.")
 
+        if not self.pk:
+            if (
+                hasattr(self.user, "profile")
+                and hasattr(self.user, "subscription")
+                and self.user.tier == UserSubscription.Tier.COMMUNITY
+                and self.user.profile.credit_points <= 0
+            ):
+                raise ValidationError(
+                    "You do not have enough credit points to create a new invoice."
+                )
+
     def update_financials(self):
-        items_sum = self.items.aggregate(total_sum=Sum("total"))["total_sum"] or 0.00  # type:ignore
+        items_sum = self.items.aggregate(total_sum=Sum("total"))[  # type:ignore
+            "total_sum"
+        ] or Decimal("0.00")
         self.subtotal = items_sum
 
         self.total_amount = self.subtotal - self.discount
 
         payment_sum = (
-            self.payments.aggregate(paid_sum=Sum("amount"))["paid_sum"] or 0.00  # type:ignore
+            self.payments.aggregate(paid_sum=Sum("amount"))["paid_sum"]  # type:ignore
+            or Decimal("0.00")
         )
 
         self.amount_paid = payment_sum
+
+        self.balance_due = max(Decimal("0.00"), self.total_amount - self.amount_paid)
 
         if self.amount_paid >= self.total_amount and self.total_amount > 0:
             self.status = self.InvoiceStatus.PAID
@@ -122,10 +147,18 @@ class Invoice(models.Model):
         else:
             self.status = self.InvoiceStatus.DRAFT
 
-        self.save(update_fields=["subtotal", "total_amount", "amount_paid", "status"])
+        self.save(
+            update_fields=[
+                "subtotal",
+                "total_amount",
+                "amount_paid",
+                "balance_due",
+                "status",
+            ]
+        )
 
 
-class InvoiceItem(models.Model):
+class InvoiceItem(BaseModel):
     class UnitType(models.TextChoices):
         QUANTITY = "QTY", "Quantity"
         HOURS = "HRS", "Hours"
@@ -190,7 +223,7 @@ class InvoiceItem(models.Model):
                 )
 
 
-class PaymentRecord(models.Model):
+class PaymentRecord(BaseModel):
     invoice = models.ForeignKey(
         Invoice, on_delete=models.CASCADE, related_name="payments"
     )
@@ -202,8 +235,6 @@ class PaymentRecord(models.Model):
     payment_method = models.CharField(max_length=50, blank=True, default="")
 
     note = models.CharField(max_length=255, blank=True, default="")
-
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f"{self.invoice.invoice_number} - {self.amount} on {self.payment_date}"

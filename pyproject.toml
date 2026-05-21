@@ -16,6 +16,7 @@ dependencies = [
   "djangorestframework>=3.16.1",
   "djangorestframework-simplejwt>=5.5.1",
   "drf-spectacular>=0.29.0",
+  "drf-writable-nested>=0.7.2",
   "gunicorn>=25.1.0",
   "phonenumbers>=9.0.23",
   "pillow>=12.1.1",

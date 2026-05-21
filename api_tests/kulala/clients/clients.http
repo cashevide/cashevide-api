@@ -34,7 +34,7 @@ Authorization: Bearer {{token}}
 {
   "address": "Madavana",
   "email": "mohammed@email.com",
-  "name": "Mohammed",
+  "name": "Mohammed Client",
   "phone": "9746469318"
 }
 

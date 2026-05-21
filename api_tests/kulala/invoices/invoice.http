@@ -1,0 +1,80 @@
+### GET Invoices
+
+GET {{base_url}}/invoices/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### GET Invoices
+
+GET {{base_url}}/invoices/23/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### POST Invoices
+
+POST {{base_url}}/invoices/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "client": 2,
+  "discount": "200",
+  "due_date": "2026-05-21",
+  "issue_date": "2026-05-21",
+  "items": [
+    {
+      "product": 5
+    },
+    {
+      "product": 4
+    }
+  ],
+  "payments": [
+    {
+      "amount": "100.00",
+      "payment_date": "2026-05-21"
+    }
+  ]
+}
+
+
+### PUT Invoices
+
+PUT {{base_url}}/invoices/23/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "client": 2,
+  "discount": "200",
+  "due_date": "2026-05-28",
+  "issue_date": "2026-05-21",
+  "items": [
+    {
+      "product": 5
+    },
+    {
+      "product": 4
+    }
+  ],
+  "payments": [
+    {
+      "amount": "100.00",
+      "payment_date": "2026-05-21"
+    },
+    {
+      "amount": "200.00",
+      "payment_date": "2026-05-22"
+    },
+    {
+      "amount": "200.00",
+      "payment_date": "2026-05-22"
+    },
+    {
+      "amount": "2800.00",
+      "payment_date": "2026-05-22"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from demo.models import Invoice, InvoiceItem, PaymentRecord
+from invoices.models import Invoice, InvoiceItem, PaymentRecord
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
@@ -9,7 +9,20 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InvoiceItem
-        fields = ["id", "invoice", "title"]
+        fields = [
+            "id",
+            "invoice",
+            "product",
+            "title",
+            "description",
+            "unit_type",
+            "unit_price",
+            "total",
+            "created_at",
+            "updated_at",
+        ]
+
+        read_only_fields = ["created_at", "updated_at"]
 
         extra_kwargs = {"invoice": {"required": False}}
 
@@ -19,18 +32,64 @@ class PaymentRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentRecord
-        fields = ["id", "invoice", "amount"]
+        fields = [
+            "id",
+            "invoice",
+            "amount",
+            "payment_date",
+            "payment_method",
+            "note",
+            "created_at",
+            "updated_at",
+        ]
+
+        read_only_fields = ["created_at", "updated_at"]
 
         extra_kwargs = {"invoice": {"required": False}}
 
 
-class InvoiceSerializer(serializers.ModelSerializer):
-    items = InvoiceItemSerializer(many=True, required=False)
-    payments = PaymentRecordSerializer(many=True, required=False)
+class InvoiceSerialzer(serializers.ModelSerializer):
+    items = InvoiceItemSerializer(many=True)
+    payments = PaymentRecordSerializer(many=True)
 
     class Meta:
         model = Invoice
-        fields = ["id", "name", "invoice_number", "items", "payments"]
+        fields = [
+            "id",
+            "user",
+            "client",
+            "name",
+            "email",
+            "phone",
+            "address",
+            "invoice_number",
+            "items",
+            "status",
+            "currency",
+            "issue_date",
+            "due_date",
+            "subtotal",
+            "discount",
+            "total_amount",
+            "amount_paid",
+            "balance_due",
+            "payments",
+            "created_at",
+            "updated_at",
+            "is_active",
+        ]
+        read_only_fields = [
+            "id",
+            "user",
+            "invoice_number",
+            "status",
+            "subtotal",
+            "total_amount",
+            "amount_paid",
+            "balance_due",
+            "created_at",
+            "updated_at",
+        ]
 
     @transaction.atomic
     def create(self, validated_data):
@@ -57,6 +116,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
+        instance.update_financials()
 
         if items_data is not None:
             item_pool = {item.id: item for item in instance.items.all()}
@@ -73,6 +133,8 @@ class InvoiceSerializer(serializers.ModelSerializer):
                             setattr(item_instance, attr, value)
 
                     item_instance.save()
+                    instance.update_financials()
+
                     keep_item_ids.append(item_instance.id)
                 else:
                     item_dic.pop("id", None)
@@ -83,6 +145,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             for old_id, old_item in item_pool.items():
                 if old_id not in keep_item_ids:
                     old_item.delete()
+                    instance.update_financials()
 
         if payments_data is not None:
             payment_pool = {payment.id: payment for payment in instance.payments.all()}
@@ -99,6 +162,8 @@ class InvoiceSerializer(serializers.ModelSerializer):
                             setattr(payment_instance, attr, value)
 
                     payment_instance.save()
+                    instance.update_financials()
+
                     keep_payment_ids.append(payment_instance.id)
                 else:
                     payment_dic.pop("id", None)
@@ -111,5 +176,6 @@ class InvoiceSerializer(serializers.ModelSerializer):
             for old_id, old_payment in payment_pool.items():
                 if old_id not in keep_payment_ids:
                     old_payment.delete()
+                    instance.update_financials()
 
         return instance

@@ -20,7 +20,7 @@ Authorization: Bearer {{token}}
 
 {
   "title": "Social Media Poster",
-  "unit_price": "3000"
+  "unit_price": "500"
 }
 
 

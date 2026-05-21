@@ -14,6 +14,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            "id",
             "user",
             "title",
             "description",
@@ -23,7 +24,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "updated_at",
             "is_active",
         ]
-        read_only_fields = ["user", "slug", "created_at", "updated_at"]
+        read_only_fields = ["id", "user", "slug", "created_at", "updated_at"]
 
     def create(self, validated_data):
         user = self.context.get("request").user  # type:ignore

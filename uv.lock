@@ -64,6 +64,7 @@ dependencies = [
     { name = "djangorestframework" },
     { name = "djangorestframework-simplejwt" },
     { name = "drf-spectacular" },
+    { name = "drf-writable-nested" },
     { name = "gunicorn" },
     { name = "phonenumbers" },
     { name = "pillow" },
@@ -94,6 +95,7 @@ requires-dist = [
     { name = "djangorestframework", specifier = ">=3.16.1" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.5.1" },
     { name = "drf-spectacular", specifier = ">=0.29.0" },
+    { name = "drf-writable-nested", specifier = ">=0.7.2" },
     { name = "gunicorn", specifier = ">=25.1.0" },
     { name = "phonenumbers", specifier = ">=9.0.23" },
     { name = "pillow", specifier = ">=12.1.1" },
@@ -374,6 +376,14 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5e/0e/a4f50d83e76cbe797eda88fc0083c8ca970cfa362b5586359ef06ec6f70a/drf_spectacular-0.29.0.tar.gz", hash = "sha256:0a069339ea390ce7f14a75e8b5af4a0860a46e833fd4af027411a3e94fc1a0cc", size = 241722, upload-time = "2025-11-02T03:40:26.348Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/32/d9/502c56fc3ca960075d00956283f1c44e8cafe433dada03f9ed2821f3073b/drf_spectacular-0.29.0-py3-none-any.whl", hash = "sha256:d1ee7c9535d89848affb4427347f7c4a22c5d22530b8842ef133d7b72e19b41a", size = 105433, upload-time = "2025-11-02T03:40:24.823Z" },
+]
+
+[[package]]
+name = "drf-writable-nested"
+version = "0.7.2"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e8/57/df87d92fbfc3f0f2ef1a49c47f2a83389a4a13b7acf62b8bf7b223627d82/drf_writable_nested-0.7.2-py3-none-any.whl", hash = "sha256:4a3d2737c1cbfafa690e30236b169112e5b23cfe3d288f3992b0651a1b828c4d", size = 10570, upload-time = "2025-03-10T19:59:05.482Z" },
 ]
 
 [[package]]

@@ -1,20 +1,27 @@
 from django.db import models
 
-from core.models import BaseModel
-from core.utils import generate_unique_slug
+
+class Invoice(models.Model):
+    name = models.CharField(max_length=50, default="")
+    invoice_number = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return f"{self.name} - {self.invoice_number}"
 
 
-class Book(BaseModel):
-    name = models.CharField(max_length=100, default="")
-    price = models.PositiveSmallIntegerField(blank=True, null=True)
-    slug = models.SlugField(unique=True, blank=True)
+class InvoiceItem(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name="items")
+    title = models.CharField(max_length=50, default="")
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return f"{self.invoice.invoice_number} - {self.title}"
 
-    def save(self, *args, **kwargs):
 
-        if not self.slug:
-            self.slug = generate_unique_slug(Book, self.name)
+class PaymentRecord(models.Model):
+    invoice = models.ForeignKey(
+        Invoice, on_delete=models.CASCADE, related_name="payments"
+    )
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
 
-        super().save(*args, **kwargs)
+    def __str__(self) -> str:
+        return f"{self.invoice.invoice_number} - {self.amount}"
