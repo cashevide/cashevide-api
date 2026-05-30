@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice {{ invoice.invoice_number }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            width: 100%;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 150px;
+            max-height: 80px;
+        }
+        .company-details {
+            float: right;
+            text-align: right;
+        }
+        .invoice-details {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .total-section {
+            float: right;
+            margin-top: 20px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        {% if business_profile and business_profile.logo %}
+            <img src="{{ business_profile.logo.url }}" class="logo" alt="Company Logo">
+        {% endif %}
+        <div class="company-details">
+            <h2>{{ business_profile.business_name|default:invoice.user.username }}</h2>
+            <p>
+               {{ business_profile.address }}<br>
+               {{ business_profile.phone_number }}<br>
+               {{ invoice.user.email }}
+               {% if business_profile.gst_number %}
+                   <br>GST: {{ business_profile.gst_number }}
+               {% endif %}
+               {% if business_profile.vat_number %}
+                   <br>VAT: {{ business_profile.vat_number }}
+               {% endif %}
+            </p>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+
+    <div class="invoice-details">
+        <h1>INVOICE</h1>
+        <p><strong>Invoice Number:</strong> {{ invoice.invoice_number }}</p>
+        <p><strong>Issue Date:</strong> {{ invoice.issue_date }}</p>
+        <p><strong>Due Date:</strong> {{ invoice.due_date }}</p>
+        <br>
+        <h3>Bill To:</h3>
+            <p><strong>{{ invoice.name }}</strong><br>
+              {{ invoice.address }}<br>
+              {{ invoice.email }}<br>
+              {{ invoice.phone }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Description</th>
+                <th>Qty/Hrs</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ invoice.currency }} {{ item.unit_price }}</td>
+                <td>{{ invoice.currency }} {{ item.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <p><strong>Subtotal:</strong> {{ invoice.currency }} {{ invoice.subtotal }}</p>
+        <p><strong>Discount:</strong> {{ invoice.currency }} {{ invoice.discount }}</p>
+        <h3><strong>Total:</strong> {{ invoice.currency }} {{ invoice.total_amount }}</h3>
+        <p><strong>Amount Paid:</strong> {{ invoice.currency }} {{ invoice.amount_paid }}</p>
+        <p><strong>Balance Due:</strong> {{ invoice.currency }} {{ invoice.balance_due }}</p>
+    </div>
+
+</body>
+</html>

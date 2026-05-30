@@ -25,7 +25,6 @@ urlpatterns = [
     path(f"{settings.ADMIN_URL}/", admin.site.urls),
     path("api/users/", include("users.urls")),
     path("api/", include("reviews.urls")),
-    path("api/", include("demo.urls")),
     path("api/", include("clients.urls")),
     path("api/", include("catalog.urls")),
     path("api/", include("invoices.urls")),

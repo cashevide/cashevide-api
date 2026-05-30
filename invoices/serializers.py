@@ -6,6 +6,7 @@ from invoices.models import Invoice, InvoiceItem, PaymentRecord
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    total = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
 
     class Meta:
         model = InvoiceItem

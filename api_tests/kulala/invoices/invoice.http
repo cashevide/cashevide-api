@@ -7,7 +7,14 @@ Authorization: Bearer {{token}}
 
 ### GET Invoices
 
-GET {{base_url}}/invoices/23/ HTTP/1.1
+GET {{base_url}}/invoices/?from_issue_date=2026-05-01&to_issue_date=2026-05-31 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### GET Invoices
+
+GET {{base_url}}/invoices/24/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -78,3 +85,10 @@ Authorization: Bearer {{token}}
     }
   ]
 }
+
+
+### DELETE Inovice
+
+DELETE {{base_url}}/invoices/23/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}

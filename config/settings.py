@@ -320,6 +320,10 @@ SPECTACULAR_SETTINGS = {
             "name": "Catalog",
             "description": "APIs for managing the user's product catalog. Includes creating, editing, soft-deleting products, and tracking product usage limits.",
         },
+        {
+            "name": "Invoices",
+            "description": "APIs for managing user invoices, including invoice items and payment records. Allows creating, updating, viewing, and deleting invoices.",
+        },
     ],
 }
 
