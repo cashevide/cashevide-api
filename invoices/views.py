@@ -4,24 +4,20 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import BaseRenderer
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from weasyprint import HTML
 
 from .filters import InvoiceFilter
-from .models import Invoice
+from .models import Invoice, PaymentRecord
 from .schema import INVOICE_VIEWSET_SCHEMA
 from .serializers import InvoiceSerialzer
-
-
-class PDFRenderer(BaseRenderer):
-    media_type = "application/pdf"
-    format = "pdf"
-    charset = None
-    render_style = "binary"
-
-    def render(self, data, accepted_media_type=None, renderer_context=None):
-        return data
+from .utils import (
+    DashboardDates,
+    PDFRenderer,
+    format_revenue_summary,
+    get_revenue_by_currency,
+)
 
 
 @INVOICE_VIEWSET_SCHEMA
@@ -52,6 +48,8 @@ class InvoiceViewSet(ModelViewSet):
         "update",
         "partial_update",
         "destroy",
+        "dashboard_analytics",
+        "download_pdf",
     ]
 
     def get_queryset(self):
@@ -96,6 +94,54 @@ class InvoiceViewSet(ModelViewSet):
         )
 
         return response
+
+    @action(detail=False, methods=["get"], url_path="dashboard-analytics")
+    def dashboard_analytics(self, request):
+
+        user = request.user
+        payment_records = PaymentRecord.objects.filter(
+            invoice__user=user,
+            invoice__is_active=True,
+            is_active=True,
+        )
+        dates = DashboardDates()
+
+        data = {
+            "total_revenue": format_revenue_summary(
+                revenue_queryset=get_revenue_by_currency(payment_records)
+            ),
+            "revenue_this_month": format_revenue_summary(
+                revenue_queryset=get_revenue_by_currency(
+                    payment_records,
+                    payment_date__month=dates.current_month,
+                    payment_date__year=dates.current_year,
+                )
+            ),
+            "revenue_last_month": format_revenue_summary(
+                revenue_queryset=get_revenue_by_currency(
+                    payment_records,
+                    payment_date__month=dates.last_month,
+                    payment_date__year=dates.last_month_year,
+                )
+            ),
+            "revenue_last_three_months": format_revenue_summary(
+                revenue_queryset=get_revenue_by_currency(
+                    payment_records,
+                    payment_date__range=(
+                        dates.start_date_3_months,
+                        dates.end_date_3_months,
+                    ),
+                )
+            ),
+            "revenue_this_year": format_revenue_summary(
+                revenue_queryset=get_revenue_by_currency(
+                    payment_records,
+                    payment_date__year=dates.current_year,
+                )
+            ),
+        }
+
+        return Response(data)
 
     def perform_destroy(self, instance) -> None:
         instance.is_active = False

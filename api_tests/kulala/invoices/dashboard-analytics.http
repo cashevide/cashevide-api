@@ -1,0 +1,5 @@
+### GET Dashboard analytics
+
+GET {{base_url}}/invoices/dashboard-analytics/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
