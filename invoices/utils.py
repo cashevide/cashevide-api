@@ -23,6 +23,7 @@ class DashboardDates:
 
         self.current_month = self.today.month
         self.current_year = self.today.year
+        self.last_year = self.current_year - 1
 
         if self.current_month == 1:
             self.last_month = 12
@@ -43,18 +44,16 @@ class DashboardDates:
         self.start_date_3_months = datetime.date(self.start_year, self.start_month, 1)
 
 
-def format_revenue_summary(revenue_queryset):
+def format_by_currency(queryset, currency_field="invoice__currency"):
     result = {}
-    for item in revenue_queryset:
-        currency_code = item["invoice__currency"] or "UNKNOWN"
+    for item in queryset:
+        currency_code = item[currency_field] or "UNKNOWN"
         result[currency_code] = item["total"] or Decimal("0.00")
 
     return result
 
 
-def get_revenue_by_currency(queryset, **kwargs):
-    return (
-        queryset.filter(**kwargs)
-        .values("invoice__currency")
-        .annotate(total=Sum("amount"))
-    )
+def get_totals_by_currency(
+    queryset, group_field="invoice__currency", sum_field="amount", **kwargs
+):
+    return queryset.filter(**kwargs).values(group_field).annotate(total=Sum(sum_field))

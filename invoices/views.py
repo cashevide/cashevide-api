@@ -15,8 +15,8 @@ from .serializers import InvoiceSerialzer
 from .utils import (
     DashboardDates,
     PDFRenderer,
-    format_revenue_summary,
-    get_revenue_by_currency,
+    format_by_currency,
+    get_totals_by_currency,
 )
 
 
@@ -97,48 +97,64 @@ class InvoiceViewSet(ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="dashboard-analytics")
     def dashboard_analytics(self, request):
-
         user = request.user
         payment_records = PaymentRecord.objects.filter(
             invoice__user=user,
             invoice__is_active=True,
             is_active=True,
         )
+        invoices = self.get_queryset()
         dates = DashboardDates()
 
         data = {
-            "total_revenue": format_revenue_summary(
-                revenue_queryset=get_revenue_by_currency(payment_records)
-            ),
-            "revenue_this_month": format_revenue_summary(
-                revenue_queryset=get_revenue_by_currency(
-                    payment_records,
-                    payment_date__month=dates.current_month,
-                    payment_date__year=dates.current_year,
-                )
-            ),
-            "revenue_last_month": format_revenue_summary(
-                revenue_queryset=get_revenue_by_currency(
-                    payment_records,
-                    payment_date__month=dates.last_month,
-                    payment_date__year=dates.last_month_year,
-                )
-            ),
-            "revenue_last_three_months": format_revenue_summary(
-                revenue_queryset=get_revenue_by_currency(
-                    payment_records,
-                    payment_date__range=(
-                        dates.start_date_3_months,
-                        dates.end_date_3_months,
+            "revenue": {
+                "total": format_by_currency(
+                    queryset=get_totals_by_currency(payment_records)
+                ),
+                "this_month": format_by_currency(
+                    queryset=get_totals_by_currency(
+                        payment_records,
+                        payment_date__month=dates.current_month,
+                        payment_date__year=dates.current_year,
+                    )
+                ),
+                "last_month": format_by_currency(
+                    queryset=get_totals_by_currency(
+                        payment_records,
+                        payment_date__month=dates.last_month,
+                        payment_date__year=dates.last_month_year,
+                    )
+                ),
+                "last_three_months": format_by_currency(
+                    queryset=get_totals_by_currency(
+                        payment_records,
+                        payment_date__range=(
+                            dates.start_date_3_months,
+                            dates.end_date_3_months,
+                        ),
+                    )
+                ),
+                "this_year": format_by_currency(
+                    queryset=get_totals_by_currency(
+                        payment_records,
+                        payment_date__year=dates.current_year,
+                    )
+                ),
+                "last_year": format_by_currency(
+                    queryset=get_totals_by_currency(
+                        payment_records,
+                        payment_date__year=dates.last_year,
+                    )
+                ),
+            },
+            "balance_due": {
+                "total": format_by_currency(
+                    queryset=get_totals_by_currency(
+                        invoices, group_field="currency", sum_field="balance_due"
                     ),
-                )
-            ),
-            "revenue_this_year": format_revenue_summary(
-                revenue_queryset=get_revenue_by_currency(
-                    payment_records,
-                    payment_date__year=dates.current_year,
-                )
-            ),
+                    currency_field="currency",
+                ),
+            },
         }
 
         return Response(data)
