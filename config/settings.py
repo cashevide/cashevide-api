@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     "catalog",
     "core",
     "demo",
+    "legal",
     "django_cleanup.apps.CleanupConfig",
 ]
 
@@ -323,6 +324,10 @@ SPECTACULAR_SETTINGS = {
         {
             "name": "Invoices",
             "description": "APIs for managing user invoices, including invoice items and payment records. Allows creating, updating, viewing, and deleting invoices.",
+        },
+        {
+            "name": "Legal",
+            "description": "APIs for retrieving legal documents like Terms and Conditions and Privacy Policy.",
         },
     ],
 }

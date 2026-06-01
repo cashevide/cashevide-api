@@ -38,4 +38,9 @@ INVOICE_VIEWSET_SCHEMA = extend_schema_view(
         description="Generates and returns a professional PDF version of the invoice dynamically without saving it on the server.",
         responses={(200, "application/pdf"): OpenApiTypes.BINARY},
     ),
+    dashboard_analytics=extend_schema(
+        tags=["Invoices"],
+        summary="Get freelancer dashboard analytics",
+        description="Fetch user's revenue and outstanding balance analytics grouped by currency across various timeframes.",
+    ),
 )
