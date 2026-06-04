@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from invoices.models import Invoice, InvoiceItem, PaymentRecord
+from users.models import UserProfile, UserSubscription
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
@@ -94,6 +95,16 @@ class InvoiceSerialzer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        user = self.context.get("request").user  # type:ignore
+
+        if user.tier == UserSubscription.Tier.COMMUNITY:
+            user_profile = UserProfile.objects.select_for_update().get(user=user)
+
+            if user_profile.credit_points <= 0:
+                raise serializers.ValidationError(
+                    "You do not have enough credit points to create a new invoice."
+                )
+
         items_data = validated_data.pop("items", [])
         payments_data = validated_data.pop("payments", [])
 
