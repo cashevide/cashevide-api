@@ -15,7 +15,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .models import User, UserBusinessProfile, UserProfile
 from .schema import (
-    GOOGLE_LOGIN_SCHEMA,
+    GOOGLE_AUTH_SCHEMA,
     OTP_REQUEST_SCHEMA,
     OTP_VERIFICATION_SCHEMA,
     PASSWORD_CHANGE_SCHEMA,
@@ -32,7 +32,7 @@ from .schema import (
     USER_SIGNUP_SCHEMA,
 )
 from .serializers import (
-    GoogleLoginSerializer,
+    GoogleAuthSerializer,
     PasswordChangeSerializer,
     PasswordResetOTPRequestSerializer,
     PasswordResetSerializer,
@@ -108,10 +108,12 @@ class SignupOTPVerificationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@GOOGLE_LOGIN_SCHEMA
-class GoogleLoginView(APIView):
+@GOOGLE_AUTH_SCHEMA
+class GoogleAuthView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
-        serializer = GoogleLoginSerializer(data=request.data)
+        serializer = GoogleAuthSerializer(data=request.data)
 
         if serializer.is_valid():
             google_id_token = serializer.validated_data.get("google_id_token")
@@ -149,6 +151,7 @@ class GoogleLoginView(APIView):
                         },
                         status=status.HTTP_200_OK,
                     )
+
                 if not username:
                     return Response(
                         {"username": ["This field is required for new users."]},

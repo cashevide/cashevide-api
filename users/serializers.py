@@ -55,7 +55,7 @@ class SignupOTPVerificationSerializer(BaseOTPVerificationSerializer):
     cache_prefix = "signup"
 
 
-class GoogleLoginSerializer(serializers.Serializer):
+class GoogleAuthSerializer(serializers.Serializer):
     google_id_token = serializers.CharField(write_only=True, required=True)
     platform = serializers.ChoiceField(
         choices=["web", "mobile"], default="mobile", write_only=True, required=False

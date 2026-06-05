@@ -9,7 +9,7 @@ from drf_spectacular.utils import (
 from rest_framework import serializers
 
 from .serializers import (
-    GoogleLoginSerializer,
+    GoogleAuthSerializer,
     PasswordChangeSerializer,
     PasswordResetOTPRequestSerializer,
     PasswordResetSerializer,
@@ -90,7 +90,7 @@ OTP_VERIFICATION_SCHEMA = extend_schema_view(
     )
 )
 
-GOOGLE_LOGIN_SCHEMA = extend_schema_view(
+GOOGLE_AUTH_SCHEMA = extend_schema_view(
     post=extend_schema(
         tags=["Authentication"],
         summary="Google OAuth Login / Sign Up",
@@ -100,7 +100,7 @@ GOOGLE_LOGIN_SCHEMA = extend_schema_view(
             "2. **Second Hit**: Frontend captures referral code & username, then sends `google_id_token`, `referral_code_input`, and `username`. Backend completes registration and returns **HTTP 201**.\n\n"
             "For existing users, they are authenticated immediately on the first hit and receive tokens (HTTP 200)."
         ),
-        request=GoogleLoginSerializer,
+        request=GoogleAuthSerializer,
         responses={
             200: inline_serializer(
                 name="GoogleLoginOrPromptResponse",
