@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     CheckFieldExistsView,
     CustomTokenRefreshView,
+    GoogleLoginView,
     LoginView,
     LogoutView,
     PasswordChangeView,
@@ -32,8 +33,9 @@ urlpatterns = [
         name="user_buisness_profile",
     ),
     path("profile/delete/", UserDeleteView.as_view(), name="user_delete"),
-    path("check-user/", CheckFieldExistsView.as_view(), name="check-user"),
+    path("check-user/", CheckFieldExistsView.as_view(), name="check_user"),
     path("login/", LoginView.as_view(), name="login"),
+    path("google/", GoogleLoginView.as_view(), name="google_login"),
     path("token/refresh/", CustomTokenRefreshView.as_view(), name="token_refresh"),
     path("change-password/", PasswordChangeView.as_view(), name="change_password"),
     path(

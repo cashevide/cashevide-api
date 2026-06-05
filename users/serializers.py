@@ -55,6 +55,42 @@ class SignupOTPVerificationSerializer(BaseOTPVerificationSerializer):
     cache_prefix = "signup"
 
 
+class GoogleLoginSerializer(serializers.Serializer):
+    google_id_token = serializers.CharField(write_only=True, required=True)
+    platform = serializers.ChoiceField(
+        choices=["web", "mobile"], default="mobile", write_only=True, required=False
+    )
+    referral_code_input = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    username = serializers.CharField(
+        required=False, allow_blank=False, allow_null=False
+    )
+
+    def validate_referral_code_input(self, value):
+        if not value:
+            return value
+
+        try:
+            self.referrer_profile = UserProfile.objects.get(referral_code=value)
+
+        except UserProfile.DoesNotExist:
+            raise serializers.ValidationError(
+                "The referral code provided is incorrect. Please check it."
+            )
+
+        return value
+
+    def validate_username(self, value):
+        if value:
+            if User.objects.filter(username__iexact=value).exists():
+                raise serializers.ValidationError(
+                    "This username is already taken. Please choose another one."
+                )
+
+        return value
+
+
 class UserDetailSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(write_only=True, required=True)
     referral_code_input = serializers.CharField(

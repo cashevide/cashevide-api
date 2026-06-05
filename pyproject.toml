@@ -17,11 +17,13 @@ dependencies = [
   "djangorestframework-simplejwt>=5.5.1",
   "drf-spectacular>=0.29.0",
   "drf-writable-nested>=0.7.2",
+  "google-auth>=2.53.0",
   "gunicorn>=25.1.0",
   "phonenumbers>=9.0.23",
   "pillow>=12.1.1",
   "psycopg2-binary>=2.9.11",
   "python-dotenv>=1.2.1",
+  "requests>=2.33.1",
   "weasyprint>=68.1",
 ]
 

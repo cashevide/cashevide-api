@@ -48,6 +48,10 @@ ADMIN_URL = os.environ.get("ADMIN_URL", "admin")
 COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 
 
+# --- GOOGLE OAUTH CONFIGURATION ---
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+
+
 # --- NETWORK & CORS SETTINGS ---
 ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS", "192.168.31.117,127.0.0.1,localhost"

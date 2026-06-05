@@ -2,6 +2,8 @@ import logging
 
 from django.conf import settings
 from django.core.cache import cache
+from google.auth.transport import requests
+from google.oauth2 import id_token
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
@@ -13,6 +15,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .models import User, UserBusinessProfile, UserProfile
 from .schema import (
+    GOOGLE_LOGIN_SCHEMA,
     OTP_REQUEST_SCHEMA,
     OTP_VERIFICATION_SCHEMA,
     PASSWORD_CHANGE_SCHEMA,
@@ -29,6 +32,7 @@ from .schema import (
     USER_SIGNUP_SCHEMA,
 )
 from .serializers import (
+    GoogleLoginSerializer,
     PasswordChangeSerializer,
     PasswordResetOTPRequestSerializer,
     PasswordResetSerializer,
@@ -40,6 +44,7 @@ from .serializers import (
     UserLoginSerializer,
     UserProfileSerializer,
 )
+from .services import create_user_account
 from .utils import clear_auth_session, generate_otp, send_otp_email, set_auth_cookies
 
 logger = logging.getLogger(__name__)
@@ -100,6 +105,79 @@ class SignupOTPVerificationView(APIView):
                 {"message": "Email verification successful."},
                 status=status.HTTP_200_OK,
             )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@GOOGLE_LOGIN_SCHEMA
+class GoogleLoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = GoogleLoginSerializer(data=request.data)
+
+        if serializer.is_valid():
+            google_id_token = serializer.validated_data.get("google_id_token")
+            platform = serializer.validated_data.get("platform")
+            referral_code_input = serializer.validated_data.get("referral_code_input")
+            username = serializer.validated_data.get("username")
+
+            try:
+                id_info = id_token.verify_oauth2_token(
+                    google_id_token,
+                    requests.Request(),
+                    settings.GOOGLE_CLIENT_ID,
+                )
+
+                email = id_info.get("email")
+                first_name = id_info.get("given_name", "")
+                last_name = id_info.get("family_name", "")
+
+            except ValueError:
+                return Response(
+                    {"error": "Invalid or expired Google token."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            user = User.objects.filter(email=email).first()
+            is_signup = False
+
+            if not user:
+                if not referral_code_input:
+                    return Response(
+                        {
+                            "status": "prompt_referral",
+                            "email": email,
+                            "full_name": f"{first_name} {last_name}",
+                        },
+                        status=status.HTTP_200_OK,
+                    )
+                if not username:
+                    return Response(
+                        {"username": ["This field is required for new users."]},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                user_data = {
+                    "email": email,
+                    "username": username,
+                    "full_name": f"{first_name} {last_name}",
+                }
+                referrer_profile = getattr(serializer, "referrer_profile", None)
+
+                user = create_user_account(
+                    validated_data=user_data, referrer_profile=referrer_profile
+                )
+                is_signup = True
+
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            return set_auth_cookies(
+                user=user,
+                platform=platform,
+                refresh=refresh,
+                access_token=access_token,
+                is_signup=is_signup,
+            )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

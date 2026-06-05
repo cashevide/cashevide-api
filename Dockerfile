@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
   libpq-dev \
   libjpeg-dev \
   zlib1g-dev \
+  libffi-dev \
   netcat-openbsd \
   pango1.0-tools \
   libcairo2-dev\

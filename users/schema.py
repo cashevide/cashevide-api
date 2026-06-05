@@ -9,6 +9,7 @@ from drf_spectacular.utils import (
 from rest_framework import serializers
 
 from .serializers import (
+    GoogleLoginSerializer,
     PasswordChangeSerializer,
     PasswordResetOTPRequestSerializer,
     PasswordResetSerializer,
@@ -84,6 +85,68 @@ OTP_VERIFICATION_SCHEMA = extend_schema_view(
                     },
                 ),
                 description="Bad Request. OTP is incorrect or has expired.",
+            ),
+        },
+    )
+)
+
+GOOGLE_LOGIN_SCHEMA = extend_schema_view(
+    post=extend_schema(
+        tags=["Authentication"],
+        summary="Google OAuth Login / Sign Up",
+        description=(
+            "Handles Google Authentication for Cashevide. This is a multi-step workflow for new users:\n\n"
+            "1. **First Hit**: Frontend sends only `google_id_token`. If the user is new, backend returns **HTTP 200** with `status: prompt_referral`.\n"
+            "2. **Second Hit**: Frontend captures referral code & username, then sends `google_id_token`, `referral_code_input`, and `username`. Backend completes registration and returns **HTTP 201**.\n\n"
+            "For existing users, they are authenticated immediately on the first hit and receive tokens (HTTP 200)."
+        ),
+        request=GoogleLoginSerializer,
+        responses={
+            200: inline_serializer(
+                name="GoogleLoginOrPromptResponse",
+                fields={
+                    # Scenario A: Prompting for referral code and username for new users
+                    "status": serializers.CharField(
+                        default="prompt_referral", required=False
+                    ),
+                    "email": serializers.EmailField(required=False),
+                    "full_name": serializers.CharField(required=False),
+                    "full_name": serializers.CharField(required=False),
+                    # Scenario B: Existing user logs in successfully
+                    "message": serializers.CharField(
+                        default="login successful", required=False
+                    ),
+                    "user": UserDetailSerializer(required=False),
+                    "access": serializers.CharField(
+                        required=False, help_text="JWT Access Token (Mobile only)"
+                    ),
+                    "refresh": serializers.CharField(
+                        required=False, help_text="JWT Refresh Token (Mobile only)"
+                    ),
+                },
+            ),
+            # 🔹 201 Created: New user successfully completes registration
+            201: inline_serializer(
+                name="GoogleSignupSuccessResponse",
+                fields={
+                    "message": serializers.CharField(default="Signup successful"),
+                    "user": UserDetailSerializer(),
+                    "access": serializers.CharField(
+                        required=False, help_text="JWT Access Token (Mobile only)"
+                    ),
+                    "refresh": serializers.CharField(
+                        required=False, help_text="JWT Refresh Token (Mobile only)"
+                    ),
+                },
+            ),
+            # 🔹 400 Bad Request: Invalid Google token or serializer validation errors
+            400: inline_serializer(
+                name="GoogleLoginErrorResponse",
+                fields={
+                    "error": serializers.CharField(
+                        default="Invalid or expired Google token."
+                    ),
+                },
             ),
         },
     )

@@ -24,9 +24,8 @@ def create_user_account(validated_data, referrer_profile=None):
     initial_credits = SIGNUP_BONUS_CREDITS
     referred_by_user = None
 
-    initial_credits += REFEREE_BONUS_CREDITS
-
     if referrer_profile:
+        initial_credits += REFEREE_BONUS_CREDITS
         referrer_profile.credit_points = F("credit_points") + REFERRER_BONUS_CREDITS
         referrer_profile.save(update_fields=["credit_points"])
         referred_by_user = referrer_profile.user
