@@ -2,6 +2,8 @@ from django.core.cache import cache
 from django.db import transaction
 from django.db.models import F
 
+from legal.models import LegalDocument, UserLegalDocumentAcceptance
+
 from .models import User, UserBusinessProfile, UserProfile, UserSubscription
 from .utils import generate_unique_referral_code
 
@@ -39,6 +41,15 @@ def create_user_account(validated_data, referrer_profile=None):
         referred_by=referred_by_user,
         credit_points=initial_credits,
     )
+
+    latest_legal_doc_ids = LegalDocument.objects.filter(is_active=True).values_list(
+        "id", flat=True
+    )
+    legal_document_acceptances = [
+        UserLegalDocumentAcceptance(user=user, legal_document_id=doc_id)
+        for doc_id in latest_legal_doc_ids
+    ]
+    UserLegalDocumentAcceptance.objects.bulk_create(legal_document_acceptances)
 
     UserBusinessProfile.objects.create(user=user)
     UserSubscription.objects.create(user=user)

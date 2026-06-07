@@ -25,6 +25,7 @@ services:
     environment:
       # Use the service name 'db' as the database host
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+      - XDG_CACHE_HOME=/tmp
     depends_on:
       db:
         # Wait for the database healthcheck to pass before starting the web service

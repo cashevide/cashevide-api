@@ -14,3 +14,9 @@ class LegalDocumentSerializer(serializers.ModelSerializer):
             "effective_date",
             "updated_at",
         ]
+
+
+class LegalDocumentAcceptanceSerializer(serializers.Serializer):
+    legal_doc_ids = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=False
+    )

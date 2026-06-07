@@ -1,0 +1,19 @@
+### GET Policies
+
+GET {{base_url}}/legal/privacy/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+### Post Accept Policies
+
+POST {{base_url}}/legal/accept/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "legal_doc_ids": [
+    9,
+    8
+  ]
+}

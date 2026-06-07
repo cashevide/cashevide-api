@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from core.models import BaseModel
@@ -27,3 +28,23 @@ class LegalDocument(BaseModel):
             ).exclude(id=self.id).update(is_active=False)  # type: ignore
 
         return super().save(*args, **kwargs)
+
+
+class UserLegalDocumentAcceptance(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="legal_document_acceptances",
+    )
+
+    legal_document = models.ForeignKey(
+        LegalDocument, on_delete=models.CASCADE, related_name="user_acceptances"
+    )
+
+    accepted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["user", "legal_document"]
+
+    def __str__(self):
+        return self.user.email
