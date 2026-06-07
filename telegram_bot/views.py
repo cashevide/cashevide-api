@@ -1,3 +1,5 @@
+import re
+
 import requests
 from django.conf import settings
 from rest_framework import status
@@ -6,7 +8,19 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 BOT_TOKEN = settings.TELEGRAM_BOT_TOKEN
+REFERRAL_CODE = settings.TELEGRAM_REFERRAL_CODE
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+
+
+def validate_profile_link(text: str) -> bool:
+    """
+    Smarter heuristic check using Regex to detect any valid URL structure
+    or domain pattern (e.g., github.com, noufal.me, http://any-blog.xyz).
+    """
+
+    urlpattern = r"(https?://\S+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})"
+
+    return bool(re.search(urlpattern, text))
 
 
 class TelegramWebhookAPIView(APIView):
@@ -19,17 +33,49 @@ class TelegramWebhookAPIView(APIView):
         if "message" in update:
             chat_id = update["message"]["chat"]["id"]
             text = update["message"].get("text", "").strip()
+            text_lower = text.lower()
 
-            if text == "/start":
-                payload = {
-                    "chat_id": chat_id,
-                    "text": "hai",
-                }
+            # 1. When the user clicks the 'Start' button for the first time
+            if text_lower == "/start":
+                reply = (
+                    "**Hello! Welcome to the Cashevide Assistant Bot.** 👋\n\n"
+                    "To get your referral code, please share your LinkedIn, Behance, "
+                    "GitHub, or personal portfolio link here. 🔗"
+                )
 
-                try:
-                    requests.post(TELEGRAM_API_URL, json=payload, timeout=10)
+            # 2. Check if the input contains a valid profile link
+            elif validate_profile_link(text_lower):
+                # Fallback safety check for referral code
+                if REFERRAL_CODE:
+                    reply = (
+                        "🎉 **Your profile verification is complete!**\n\n"
+                        "Here is your referral code to register on the app:\n\n"
+                        f"`{REFERRAL_CODE}`\n\n"
+                        "Copy this code and use it in the app. Welcome to Cashevide! 🤝"
+                    )
+                else:
+                    reply = (
+                        "⚠️ Sorry, referral codes are currently unavailable due to "
+                        "technical reasons. Please try again later."
+                    )
 
-                except Exception as e:
-                    print(f"Telegram Error: {e}")
+            # 3. Fallback for messages without a valid link
+            else:
+                reply = (
+                    "Please send a valid profile link (LinkedIn/GitHub/Portfolio) "
+                    "to receive your referral code. 😊"
+                )
+
+            payload = {
+                "chat_id": chat_id,
+                "text": reply,
+                "parse_mode": "Markdown",  # Helps copy code with a single click
+            }
+
+            try:
+                requests.post(TELEGRAM_API_URL, json=payload, timeout=10)
+
+            except Exception as e:
+                print(f"Telegram Error: {e}")
 
         return Response({"status": "ok"}, status=status.HTTP_200_OK)
