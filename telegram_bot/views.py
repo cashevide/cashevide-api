@@ -53,7 +53,7 @@ class TelegramWebhookAPIView(APIView):
                     reply = (
                         "🎉 *Your profile verification is complete!*\n\n"
                         "Here is your referral code to register on the app:\n\n"
-                        f"*`{REFERRAL_CODE}`*\n\n"
+                        f"*{REFERRAL_CODE}*\n\n"
                         "Copy this code and use it in the app. Welcome to Cashevide! 🤝"
                     )
 
