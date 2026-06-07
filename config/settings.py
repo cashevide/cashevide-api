@@ -52,6 +52,11 @@ COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 
 
+# --- TELEGRAM BOT CONFIGURATION ---
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_REFERRAL_CODE = os.environ.get("TELEGRAM_REFERRAL_CODE")
+
+
 # --- NETWORK & CORS SETTINGS ---
 ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS", "192.168.31.117,127.0.0.1,localhost"
@@ -92,6 +97,7 @@ INSTALLED_APPS = [
     "core",
     "demo",
     "legal",
+    "telegram_bot",
     "django_cleanup.apps.CleanupConfig",
 ]
 
