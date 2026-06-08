@@ -1,50 +1,79 @@
-# Cashevide API 🚀
+# Cashevide
 
-Cashevide API is an open-source initiative built to ensure payment security and client transparency for freelancers. Powered by Python and the Django REST Framework, it provides a robust backend system for managing freelance operations securely and efficiently.
+**Cashevide (Cash-e-Wide / ക്യാഷെവിടെ)** is a platform built for freelancers to make informed decisions about clients while protecting privacy and reducing legal risks.
 
-## 🌟 Key Features
+The platform helps freelancers identify reliable and unreliable clients through structured reviews and provides tools for managing invoices and freelance business operations.
 
-### 🔐 User Authentication & Management
+## 🌟 Features
 
-* Secure, multi-platform JWT-based login.
-* Comprehensive profile and account management.
+### 💬 Structured Client Reviews
 
-### 💬 Transparent Review System
+Instead of public free-form reviews, Cashevide uses predefined review categories such as:
 
-* Allows freelancers to post and manage reviews for business clients.
-* Uses pre-defined tags (e.g., *'Good Service'*, *'High Price'*) to help the freelancer community make informed decisions.
+* Paid on time
+* Payment delayed
+* Good communication
+* Professional behavior
+* Unprofessional behavior
+* Non-payment
 
-### 🤝 Client Management
+This approach improves consistency, protects privacy, and helps reduce abuse.
 
-* Dedicated space to add, edit, and track personal clients.
-* Easily monitor and manage clients used for generating invoices.
+### 🔒 Privacy-First Design
 
-### 📦 Service & Product Catalog
+Client records are identified using hashed mobile numbers.
 
-* Maintain a customized catalog of products or services.
-* Built-in usage limit tracking to monitor offerings efficiently.
+* Mobile numbers are never stored in plain text
+* SHA-256 hashing is used for identification
+* No sensitive client information is publicly exposed
 
-### 🧾 Advanced Invoicing System
+### 🧾 Invoice Management
 
-* Complete workflow to generate professional invoices.
-* Add specific invoice items, track payment records, and monitor outstanding due balances.
+Generate professional invoices and manage freelance billing workflows from a single platform.
 
-### ☁️ Scalable Cloud Integrations
+### 👤 Freelancer Accounts
 
-* **Caching:** Redis for lightning-fast caching and performance.
-* **Email Delivery:** AWS SES for reliable, secure email communication.
-* **Media Storage:** Cloudflare R2 / AWS S3 for secure, scalable media and file storage.
+Secure account management and authentication for freelancers.
 
-### 📄 PDF Generation Ready
+### ☁️ Modern Cloud Infrastructure
 
-* Configured with **WeasyPrint** to dynamically generate and export professional, high-quality PDF invoices.
+Designed for scalability and reliability using modern cloud services and infrastructure components.
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-* **Backend Framework:** Django & Django REST Framework (DRF)
-* **Language:** Python
-* **Database:** PostgreSQL
-* **Caching & Queue:** Redis
-* **Cloud Storage:** Cloudflare R2 / AWS S3
-* **Mailing Service:** AWS SES
-* **PDF Engine:** WeasyPrint
+### Backend
+
+* Django
+* Django REST Framework
+* PostgreSQL
+* Redis
+
+### Frontend
+
+* Expo
+* Web
+* Android
+* iOS
+
+### Infrastructure
+
+* Docker
+* Nginx
+* Hetzner VPS
+
+### Cloud Services
+
+* Cloudflare R2
+* AWS SES
+
+## 🎯 Project Goals
+
+* Help freelancers make better client decisions
+* Encourage timely payments and professional behavior
+* Protect client privacy
+* Reduce legal risks through structured review data
+* Provide useful business tools for freelancers
+
+## 📜 License
+
+Licensed under the O'Saasy License.
