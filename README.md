@@ -1,6 +1,6 @@
 # Cashevide
 
-**Cashevide (Cash-e-Wide / ക്യാഷെവിടെ)** is a platform built for freelancers to make informed decisions about clients while protecting privacy and reducing legal risks.
+**Cashevide (Cash-e-Wide) is a platform built for freelancers to make informed decisions about clients while protecting privacy and reducing legal risks.
 
 The platform helps freelancers identify reliable and unreliable clients through structured reviews and provides tools for managing invoices and freelance business operations.
 
