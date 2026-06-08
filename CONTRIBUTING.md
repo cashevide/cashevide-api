@@ -1,12 +1,11 @@
 ## ⚠️ Note on Contributions
 
 Hi there! 👋
-Thank you for your interest in **Zymino**. Currently, I am maintaining this project for my personal learning and development goals.
 
-At this stage, **I am not accepting any Pull Requests (PRs) or external code contributions.** I want to keep the codebase consistent with my personal vision and learning path.
+Thank you for your interest in **Cashevide**.
 
-However, feel free to:
-* **Fork** the repository and experiment with your own changes.
-* **Open an Issue** if you find any bugs or have suggestions (I'll check them as time permits).
+**Pull Requests (PRs) and external code contributions are currently not accepted.**
 
-Thanks for understanding!
+Feel free to fork the repository, modify it for your own needs, report bugs, or share suggestions through Issues.
+
+Thank you for your support! ❤️
