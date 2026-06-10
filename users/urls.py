@@ -30,7 +30,7 @@ urlpatterns = [
     path(
         "business-profile/me/",
         UserBusinessProfileView.as_view(),
-        name="user_buisness_profile",
+        name="user_business_profile",
     ),
     path("profile/delete/", UserDeleteView.as_view(), name="user_delete"),
     path("check-user/", CheckFieldExistsView.as_view(), name="check_user"),

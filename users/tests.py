@@ -148,7 +148,7 @@ class UserBusinessProfileTests(APITestCase):
 
         self.client.force_authenticate(user=self.user)
 
-        self.url = reverse("user_buisness_profile")
+        self.url = reverse("user_business_profile")
 
     def test_get_business_profile(self):
         response = self.client.get(self.url)
@@ -267,7 +267,7 @@ class CheckUserTests(APITestCase):
             username="existinguser",
             password="CashevideStrong@2026",
         )
-        self.url = reverse("check-user")
+        self.url = reverse("user_profile")
 
     def test_check_existing_username(self):
         response = self.client.get(

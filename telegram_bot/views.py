@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlparse
 
 import requests
 from django.conf import settings
@@ -13,14 +14,29 @@ TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
 
 def validate_profile_link(text: str) -> bool:
-    """
-    Smarter heuristic check using Regex to detect any valid URL structure
-    or domain pattern (e.g., github.com, noufal.me, http://any-blog.xyz).
-    """
-
     urlpattern = r"(https?://\S+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})"
 
-    return bool(re.search(urlpattern, text))
+    if not re.search(urlpattern, text):
+        return False
+
+    exclude_list = {
+        "google.com",
+        "youtube.com",
+        "instagram.com",
+        "facebook.com",
+        "x.com",
+        "twitter.com",
+    }
+
+    url = text
+
+    if not url.startswith(("http://", "https://")):
+        url = f"https://{url}"
+
+    domain = urlparse(url).netloc.lower()
+    domain = domain.replace("www.", "")
+
+    return domain not in exclude_list
 
 
 class TelegramWebhookAPIView(APIView):
@@ -41,9 +57,11 @@ class TelegramWebhookAPIView(APIView):
             # 1. When the user clicks the 'Start' button for the first time
             if text_lower == "/start":
                 reply = (
-                    f"*Hello {name}! Welcome to the Cashevide Assistant Bot.* 👋\n\n"
-                    "To get your *referral code*, please share your LinkedIn, Behance, "
-                    "GitHub, or personal portfolio link here. 🔗"
+                    f"👋 Hi {name}!\n\n"
+                    "Send your LinkedIn, GitHub, Behance, or portfolio link "
+                    "to get your referral code.\n\n"
+                    "Example:\n"
+                    "https://github.com/username"
                 )
 
             # 2. Check if the input contains a valid profile link
@@ -51,18 +69,17 @@ class TelegramWebhookAPIView(APIView):
                 # Fallback safety check for referral code
                 if REFERRAL_CODE:
                     reply = (
-                        "🎉 *Your profile verification is complete!*\n\n"
-                        "Here is your referral code to register on the app:\n\n"
+                        "✅ Profile verified!\n\n"
+                        "Your referral code:\n\n"
                         f"*{REFERRAL_CODE}*\n\n"
-                        "Click the button below to copy your referral code and use it "
-                        "in the app. Welcome to Cashevide! 🤝"
+                        "Tap the button below to copy it and use it during signup."
                     )
 
                     reply_markup = {
                         "inline_keyboard": [
                             [
                                 {
-                                    "text": "Copy Referral Code 📋",
+                                    "text": "Copy Referral Code",
                                     "copy_text": {"text": REFERRAL_CODE},
                                 }
                             ]
@@ -71,21 +88,23 @@ class TelegramWebhookAPIView(APIView):
 
                 else:
                     reply = (
-                        "⚠️ Sorry, referral codes are currently unavailable due to "
-                        "technical reasons. Please try again later."
+                        "⚠️ Referral codes are temporarily unavailable.\n\n"
+                        "Please try again later."
                     )
 
             # 3. Fallback for messages without a valid link
             else:
                 reply = (
-                    "Please send a valid profile link (LinkedIn/GitHub/Portfolio) "
-                    "to receive your referral code. 😊"
+                    "❌ I couldn't find a valid profile link.\n\n"
+                    "Send your LinkedIn, GitHub, Behance, or portfolio link.\n\n"
+                    "Example:\n"
+                    "https://github.com/username"
                 )
 
             payload = {
                 "chat_id": chat_id,
                 "text": reply,
-                "parse_mode": "Markdown",  # Helps copy code with a single click
+                "parse_mode": "Markdown",
             }
 
             if reply_markup:
