@@ -1,7 +1,8 @@
-import re
+import socket
 from urllib.parse import urlparse
 
 import requests
+import tldextract
 from django.conf import settings
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -13,30 +14,70 @@ REFERRAL_CODE = settings.TELEGRAM_REFERRAL_CODE
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
 
-def validate_profile_link(text: str) -> bool:
-    urlpattern = r"(https?://\S+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})"
+EXCLUDE_LIST = {
+    "google.com",
+    "bing.com",
+    "duckduckgo.com",
+    "yahoo.com",
+    "facebook.com",
+    "instagram.com",
+    "x.com",
+    "twitter.com",
+    "tiktok.com",
+    "threads.net",
+    "reddit.com",
+    "snapchat.com",
+    "pinterest.com",
+    "youtube.com",
+    "youtu.be",
+    "vimeo.com",
+    "twitch.tv",
+    "wikipedia.org",
+    "quora.com",
+    "bbc.com",
+    "bbc.co.uk",
+    "cnn.com",
+    "reuters.com",
+    "ndtv.com",
+    "indiatoday.in",
+    "thehindu.com",
+    "chatgpt.com",
+    "openai.com",
+    "gemini.google.com",
+    "claude.ai",
+}
 
-    if not re.search(urlpattern, text):
+
+def domain_exists(domain: str) -> bool:
+    try:
+        socket.getaddrinfo(domain, None)
+        return True
+    except socket.gaierror:
         return False
 
-    exclude_list = {
-        "google.com",
-        "youtube.com",
-        "instagram.com",
-        "facebook.com",
-        "x.com",
-        "twitter.com",
-    }
 
-    url = text
+def validate_profile_link(text: str) -> bool:
+    url = text.strip().lower()
 
     if not url.startswith(("http://", "https://")):
         url = f"https://{url}"
 
-    domain = urlparse(url).netloc.lower()
-    domain = domain.replace("www.", "")
+    domain = urlparse(url).hostname
 
-    return domain not in exclude_list
+    if not domain:
+        return False
+
+    if not tldextract.extract(domain).suffix:
+        return False
+
+    for exclude in EXCLUDE_LIST:
+        if domain == exclude or domain.endswith(f".{exclude}"):
+            return False
+
+    if not domain_exists(domain):
+        return False
+
+    return True
 
 
 class TelegramWebhookAPIView(APIView):
@@ -57,11 +98,9 @@ class TelegramWebhookAPIView(APIView):
             # 1. When the user clicks the 'Start' button for the first time
             if text_lower == "/start":
                 reply = (
-                    f"👋 Hi {name}!\n\n"
+                    f"👋 *Hi {name}!*\n\n"
                     "Send your LinkedIn, GitHub, Behance, or portfolio link "
-                    "to get your referral code.\n\n"
-                    "Example:\n"
-                    "https://github.com/username"
+                    "to get your *Referral Code*.\n\n"
                 )
 
             # 2. Check if the input contains a valid profile link
@@ -97,8 +136,6 @@ class TelegramWebhookAPIView(APIView):
                 reply = (
                     "❌ I couldn't find a valid profile link.\n\n"
                     "Send your LinkedIn, GitHub, Behance, or portfolio link.\n\n"
-                    "Example:\n"
-                    "https://github.com/username"
                 )
 
             payload = {
