@@ -1,22 +1,20 @@
 from django.urls import path
 
-from .views import (
+from .views.account import (
     CheckFieldExistsView,
-    CustomTokenRefreshView,
-    GoogleAuthView,
-    LoginView,
-    LogoutView,
     PasswordChangeView,
+    PasswordResetView,
+    UserDeleteView,
+)
+from .views.auth import GoogleAuthView, LoginView, LogoutView, UserSignupView
+from .views.otp import (
     PasswordResetOTPRequestView,
     PasswordResetOTPVerificationView,
-    PasswordResetView,
     SignupOTPRequestView,
     SignupOTPVerificationView,
-    UserBusinessProfileView,
-    UserDeleteView,
-    UserProfileView,
-    UserSignupView,
 )
+from .views.profile import UserBusinessProfileView, UserProfileView
+from .views.token import CustomTokenRefreshView
 
 urlpatterns = [
     path("signup-request-otp/", SignupOTPRequestView.as_view(), name="signup_send_otp"),
