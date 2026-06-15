@@ -219,7 +219,7 @@ class PasswordResetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["message"],
-            "An OTP has been successfully sent to your email address.",
+            "If an account exists, an OTP has been sent.",
         )
 
         otp_in_cache = cache.get(f"password_reset_otp_{self.email}")
@@ -267,7 +267,7 @@ class CheckUserTests(APITestCase):
             username="existinguser",
             password="CashevideStrong@2026",
         )
-        self.url = reverse("user_profile")
+        self.url = reverse("check_user")
 
     def test_check_existing_username(self):
         response = self.client.get(
