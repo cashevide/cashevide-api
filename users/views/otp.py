@@ -50,6 +50,14 @@ class BaseOTPRequestView(APIView):
                 status=status.HTTP_200_OK,
             )
 
+        timer = cache.get(f"{self.otp_cache_prefix}_cooldown_{email}")
+
+        if timer:
+            return Response(
+                {"error": "Please wait 60 seconds before requesting another OTP."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         otp = generate_otp()
 
         try:
@@ -57,6 +65,9 @@ class BaseOTPRequestView(APIView):
 
             cache.set(f"{self.otp_cache_prefix}_otp_{email}", value=otp, timeout=300)
             cache.delete(f"{self.otp_cache_prefix}_attempts_{email}")
+            cache.set(
+                f"{self.otp_cache_prefix}_cooldown_{email}", value=True, timeout=60
+            )
 
             return Response(
                 {"message": self.message},
