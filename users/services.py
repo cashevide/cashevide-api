@@ -55,7 +55,6 @@ def create_user_account(validated_data, referrer_profile=None):
     UserSubscription.objects.create(user=user)
 
     if email:
-        cache.delete(f"signup_otp_{email}")
         cache.delete(f"signup_verified_{email}")
 
     return user

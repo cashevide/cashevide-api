@@ -17,6 +17,7 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
             "product",
             "title",
             "description",
+            "quantity",
             "unit_type",
             "unit_price",
             "total",
@@ -24,7 +25,7 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
-        read_only_fields = ["created_at", "updated_at"]
+        read_only_fields = ["created_at", "updated_at", "total"]
 
         extra_kwargs = {"invoice": {"required": False}}
 

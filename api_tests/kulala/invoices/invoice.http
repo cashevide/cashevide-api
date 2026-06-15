@@ -61,7 +61,8 @@ Authorization: Bearer {{token}}
   "issue_date": "2026-05-21",
   "items": [
     {
-      "product": 5
+      "product": 5,
+      "quantity":2
     },
     {
       "product": 4

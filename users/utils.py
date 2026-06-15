@@ -1,5 +1,6 @@
 import logging
 import random
+import secrets
 import string
 
 from django.conf import settings
@@ -93,7 +94,8 @@ def generate_unique_referral_code():
 
 
 def generate_otp(length=6):
-    return "".join(random.choices(string.digits, k=length))
+    upper_bound = 10**length
+    return f"{secrets.randbelow(upper_bound):0{length}d}"
 
 
 def send_otp_email(email, otp, purpose="signup"):

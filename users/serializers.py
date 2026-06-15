@@ -26,15 +26,39 @@ class BaseOTPVerificationSerializer(serializers.Serializer):
         if not cached_otp:
             raise serializers.ValidationError(
                 {
-                    "otp": "The OTP has expired or does not exist. Please request a new one."
+                    "otp": (
+                        "The OTP has expired or does not exist. "
+                        "Please request a new one."
+                    )
                 }
             )
         if cached_otp != otp:
+            old_attempts = cache.get(f"{self.cache_prefix}_attempts_{email}")
+            if old_attempts is None:
+                old_attempts = 0
+
+            new_attempts = old_attempts + 1
+            # print(f"new attempts: {new_attempts}")
+
+            cache.set(
+                f"{self.cache_prefix}_attempts_{email}", value=new_attempts, timeout=300
+            )
+
+            if new_attempts >= 5:
+                cache.delete(f"{self.cache_prefix}_otp_{email}")
+                cache.delete(f"{self.cache_prefix}_attempts_{email}")
+
+                raise serializers.ValidationError(
+                    {"otp": "Too many attempts. OTP blocked. Please request a new OTP."}
+                )
+
             raise serializers.ValidationError(
                 {"otp": "The provided OTP is invalid. Please try again."}
             )
 
         cache.set(f"{self.cache_prefix}_verified_{email}", True, timeout=900)
+        cache.delete(f"{self.cache_prefix}_otp_{email}")
+        cache.delete(f"{self.cache_prefix}_attempts_{email}")
 
         return attrs
 
@@ -286,15 +310,6 @@ class PasswordChangeSerializer(serializers.Serializer):
 
 class PasswordResetOTPRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True)
-
-    def validate_email(self, value):
-
-        if not User.objects.filter(email=value).exists():
-            raise serializers.ValidationError(
-                "No account found with this email address."
-            )
-
-        return value
 
 
 class PasswordResetVerificationSerializer(BaseOTPVerificationSerializer):

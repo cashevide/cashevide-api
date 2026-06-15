@@ -57,39 +57,51 @@ class BaseOTPRequestView(APIView):
     otp_cache_prefix = None
     OTPRequestSerializer = None
     purpose = "signup"
+    message = None
+
+    def should_send_otp(self, email: str) -> bool:
+        return True
 
     def post(self, request, *args, **kwargs):
 
         serializer = self.OTPRequestSerializer(data=request.data)  # type:ignore
-        if serializer.is_valid():
-            email = serializer.validated_data.get("email")
-            otp = generate_otp()
 
-            try:
-                send_otp_email(email, otp, self.purpose)
-                cache.set(
-                    f"{self.otp_cache_prefix}_otp_{email}", value=otp, timeout=300
-                )
-                return Response(
-                    {
-                        "message": "An OTP has been successfully "
-                        "sent to your email address."
-                    },
-                    status=status.HTTP_200_OK,
-                )
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            except Exception:
-                return Response(
-                    {"error": "Failed to send the OTP. Please try again later."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        email = serializer.validated_data["email"]
+
+        if not self.should_send_otp(email):
+            return Response(
+                {"message": self.message},
+                status=status.HTTP_200_OK,
+            )
+
+        otp = generate_otp()
+
+        try:
+            send_otp_email(email, otp, self.purpose)
+
+            cache.set(f"{self.otp_cache_prefix}_otp_{email}", value=otp, timeout=300)
+            cache.delete(f"{self.otp_cache_prefix}_attempts_{email}")
+
+            return Response(
+                {"message": self.message},
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception:
+            return Response(
+                {"error": "Failed to send the OTP. Please try again later."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 @OTP_REQUEST_SCHEMA
 class SignupOTPRequestView(BaseOTPRequestView):
     otp_cache_prefix = "signup"
     OTPRequestSerializer = SignupOTPRequestSerializer
+    message = "An OTP has been successfully sent to your email address."
 
 
 @OTP_VERIFICATION_SCHEMA
@@ -319,6 +331,10 @@ class PasswordResetOTPRequestView(BaseOTPRequestView):
     otp_cache_prefix = "password_reset"
     OTPRequestSerializer = PasswordResetOTPRequestSerializer
     purpose = "password_reset"
+    message = "If an account exists, an OTP has been sent."
+
+    def should_send_otp(self, email: str) -> bool:
+        return User.objects.filter(email=email).exists()
 
 
 @PASSWORD_RESET_OTP_VERIFICATION_SCHEMA
