@@ -38,7 +38,6 @@ class BaseOTPVerificationSerializer(serializers.Serializer):
                 old_attempts = 0
 
             new_attempts = old_attempts + 1
-            # print(f"new attempts: {new_attempts}")
 
             cache.set(
                 f"{self.cache_prefix}_attempts_{email}", value=new_attempts, timeout=300
@@ -339,6 +338,6 @@ class PasswordResetSerializer(serializers.Serializer):
         user.save()
 
         if email:
-            cache.delete(f"password_reset_otp_{email}")
             cache.delete(f"password_reset_verified_{email}")
+
         return user
