@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def set_auth_cookies(user, platform, refresh, access_token, is_signup):
 
-    from .serializers import UserDetailSerializer
+    from users.serializers.auth import UserDetailSerializer
 
     status_code = status.HTTP_201_CREATED if is_signup else status.HTTP_200_OK
     message = "Signup successful" if is_signup else "login successful"

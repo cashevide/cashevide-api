@@ -8,17 +8,23 @@ from drf_spectacular.utils import (
 )
 from rest_framework import serializers
 
-from .serializers import (
+from users.serializers.auth import (
     GoogleAuthSerializer,
-    PasswordChangeSerializer,
+    UserDetailSerializer,
+    UserLoginSerializer,
+)
+from users.serializers.otp import (
     PasswordResetOTPRequestSerializer,
-    PasswordResetSerializer,
     PasswordResetVerificationSerializer,
     SignupOTPRequestSerializer,
     SignupOTPVerificationSerializer,
+)
+from users.serializers.password import (
+    PasswordChangeSerializer,
+    PasswordResetSerializer,
+)
+from users.serializers.profile import (
     UserBusinessProfileSerializer,
-    UserDetailSerializer,
-    UserLoginSerializer,
     UserProfileSerializer,
 )
 

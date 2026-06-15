@@ -1,5 +1,3 @@
-import logging
-
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
@@ -9,12 +7,10 @@ from users.schema import (
     USER_BUSINESS_PROFILE_SCHEMA,
     USER_PROFILE_SCHEMA,
 )
-from users.serializers import (
+from users.serializers.profile import (
     UserBusinessProfileSerializer,
     UserProfileSerializer,
 )
-
-logger = logging.getLogger(__name__)
 
 
 @USER_PROFILE_SCHEMA

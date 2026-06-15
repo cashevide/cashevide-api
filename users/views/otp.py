@@ -1,5 +1,3 @@
-import logging
-
 from django.core.cache import cache
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -13,7 +11,7 @@ from users.schema import (
     PASSWORD_RESET_OTP_REQUEST_SCHEMA,
     PASSWORD_RESET_OTP_VERIFICATION_SCHEMA,
 )
-from users.serializers import (
+from users.serializers.otp import (
     PasswordResetOTPRequestSerializer,
     PasswordResetVerificationSerializer,
     SignupOTPRequestSerializer,
@@ -23,8 +21,6 @@ from users.utils import (
     generate_otp,
     send_otp_email,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class BaseOTPRequestView(APIView):

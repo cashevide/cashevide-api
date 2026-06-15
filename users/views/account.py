@@ -12,7 +12,7 @@ from users.schema import (
     USER_CHECK_FIELD_SCHEMA,
     USER_DELETE_SCHEMA,
 )
-from users.serializers import (
+from users.serializers.password import (
     PasswordChangeSerializer,
     PasswordResetSerializer,
 )

@@ -1,5 +1,3 @@
-import logging
-
 from django.conf import settings
 from google.auth.transport import requests
 from google.oauth2 import id_token
@@ -17,15 +15,13 @@ from users.schema import (
     USER_LOGOUT_SCHEMA,
     USER_SIGNUP_SCHEMA,
 )
-from users.serializers import (
+from users.serializers.auth import (
     GoogleAuthSerializer,
     UserDetailSerializer,
     UserLoginSerializer,
 )
 from users.services import create_user_account
 from users.utils import set_auth_cookies
-
-logger = logging.getLogger(__name__)
 
 
 @GOOGLE_AUTH_SCHEMA
