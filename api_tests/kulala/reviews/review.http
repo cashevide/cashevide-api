@@ -12,6 +12,13 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
+### GET My Review
+
+GET {{base_url}}/reviewed-client/{{reviewed_client_id}}/reviews/my-review/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
 ### POST Review
 
 POST {{base_url}}/reviewed-client/{{reviewed_client_id}}/reviews/ HTTP/1.1

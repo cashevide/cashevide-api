@@ -1,11 +1,12 @@
 from drf_spectacular.utils import (
+    OpenApiExample,
     extend_schema,
     extend_schema_view,
     inline_serializer,
 )
 from rest_framework import serializers
 
-from .serializers import ClientLookupSerializer
+from .serializers import ClientLookupSerializer, ReviewSerializer
 
 TAG_VIEWSET_SCHEMA = extend_schema_view(
     list=extend_schema(
@@ -82,11 +83,6 @@ REVIEW_VIEWSET_SCHEMA = extend_schema_view(
         summary="Get reviews for a client",
         description="Retrieve all reviews associated with a specific client.",
     ),
-    summary=extend_schema(
-        tags=["Reviews"],
-        summary="Get client review summary",
-        description="Returns average rating, total reviews, distribution, and tags summary.",
-    ),
     create=extend_schema(
         tags=["Reviews"],
         summary="Post a review for a client",
@@ -111,6 +107,51 @@ REVIEW_VIEWSET_SCHEMA = extend_schema_view(
         tags=["Reviews"],
         summary="Delete a review (Superuser only)",
         description="Permanently remove a review from the system.",
+    ),
+    summary=extend_schema(
+        tags=["Reviews"],
+        summary="Get client review summary",
+        description="Returns average rating, total reviews, distribution, and tags summary.",
+    ),
+    my_review=extend_schema(
+        tags=["Reviews"],
+        summary="Get current user's review for this client",
+        description="Checks if the authenticated user has already reviewed the client. Returns the review details if it exists.",
+        responses={
+            200: inline_serializer(
+                name="MyReviewResponse",
+                fields={
+                    "exists": serializers.BooleanField(),
+                    "review": ReviewSerializer(allow_null=True),
+                },
+            )
+        },
+        examples=[
+            OpenApiExample(
+                name="Review Exists",
+                summary="When the user has already reviewed the client",
+                value={
+                    "exists": True,
+                    "review": {
+                        "id": 2,
+                        "ratings": 3,
+                        "tags": [2, 3, 6],
+                        "client": "955fea4b-086e-4b63-980b-cfc2f7d4d615",
+                        "created_at": "2026-06-19T01:06:32.109Z",
+                        "updated_at": "2026-06-19T01:06:32.109Z",
+                    },
+                },
+                response_only=True,
+                status_codes=["200"],
+            ),
+            OpenApiExample(
+                name="Review Does Not Exist",
+                summary="When the user has NOT reviewed the client yet",
+                value={"exists": False, "review": None},
+                response_only=True,
+                status_codes=["200"],
+            ),
+        ],
     ),
 )
 

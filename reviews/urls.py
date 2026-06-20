@@ -23,11 +23,6 @@ urlpatterns = [
         name="client_review",
     ),
     path(
-        "reviewed-client/<uuid:client_id>/reviews/summary/",
-        ReviewViewSet.as_view({"get": "summary"}),
-        name="client_review_summary",
-    ),
-    path(
         "reviewed-client/<uuid:client_id>/reviews/<int:pk>/",
         ReviewViewSet.as_view(
             {
@@ -38,5 +33,15 @@ urlpatterns = [
             },
         ),
         name="client_detail",
+    ),
+    path(
+        "reviewed-client/<uuid:client_id>/reviews/summary/",
+        ReviewViewSet.as_view({"get": "summary"}),
+        name="client_review_summary",
+    ),
+    path(
+        "reviewed-client/<uuid:client_id>/reviews/my-review/",
+        ReviewViewSet.as_view({"get": "my_review"}),
+        name="reviewed_client_my_review",
     ),
 ]

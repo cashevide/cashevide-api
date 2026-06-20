@@ -98,7 +98,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.action in ["list", "create", "summary"]:
+        if self.action in ["list", "create", "summary", "my_review"]:
             permission_classes = [IsAuthenticated]
 
         else:
@@ -133,6 +133,31 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="my-review",
+    )
+    def my_review(self, request, client_id=None):
+        queryset = self.get_queryset()
+        user = request.user
+
+        review_instance = queryset.filter(author=user).first()
+
+        if review_instance:
+            serializer = ReviewSerializer(review_instance)
+            data = {
+                "exists": True,
+                "review": serializer.data,
+            }
+        else:
+            data = {
+                "exists": False,
+                "review": None,
+            }
+
+        return Response(data)
 
     @action(detail=False, methods=["get"])
     def summary(self, request, client_id=None):
@@ -183,7 +208,7 @@ class UserReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Review.objects.filter(
-            author=self.request.user, client__is_active=True
+            author=self.request.user, client__is_active=True, is_active=True
         ).order_by("-created_at")
 
     def get_serializer_class(self):
@@ -196,3 +221,7 @@ class UserReviewViewSet(viewsets.ModelViewSet):
             {"detail": "Use client endpoint to create reviews."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()

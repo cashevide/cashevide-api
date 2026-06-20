@@ -40,7 +40,6 @@ class BaseReviewSerializer(serializers.ModelSerializer):
             "client",
             "created_at",
             "updated_at",
-            "is_active",
         ]
         read_only_fields = ["author", "client", "created_at", "updated_at"]
 
@@ -53,7 +52,8 @@ class BaseReviewSerializer(serializers.ModelSerializer):
             seen = set()
             duplicates = set(x for x in groups if x in seen or seen.add(x))
             raise serializers.ValidationError(
-                f"You cannot select conflicting tags from the same category: {', '.join(duplicates)}"
+                "You cannot select conflicting tags from the "
+                f"same category: {', '.join(duplicates)}"
             )
 
         return tags
@@ -81,7 +81,7 @@ class UserReviewSerializer(BaseReviewSerializer):
     pass
 
 
-class ReviewListSerializer(serializers.ModelSerializer):
+class BaseReviewListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = serializers.ReadOnlyField(source="author.username")
 
@@ -94,16 +94,16 @@ class ReviewListSerializer(serializers.ModelSerializer):
             "author",
             "created_at",
             "updated_at",
-            "is_active",
         ]
         read_only_fields = ["created_at", "updated_at"]
 
 
-class UserReviewListSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source="author.username")
-    tags = TagSerializer(many=True)
+class ReviewListSerializer(BaseReviewListSerializer):
+    pass
+
+
+class UserReviewListSerializer(BaseReviewListSerializer):
     client = ReviewedClientSerializer()
 
-    class Meta:
-        model = Review
-        fields = ["id", "author", "ratings", "tags", "client"]
+    class Meta(BaseReviewListSerializer.Meta):
+        fields = BaseReviewListSerializer.Meta.fields + ["client"]
