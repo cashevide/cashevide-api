@@ -112,6 +112,66 @@ REVIEW_VIEWSET_SCHEMA = extend_schema_view(
         tags=["Reviews"],
         summary="Get client review summary",
         description="Returns average rating, total reviews, distribution, and tags summary.",
+        responses={
+            200: inline_serializer(
+                name="ClientReviewSummaryResponse",
+                fields={
+                    "average_rating": serializers.FloatField(),
+                    "total_reviews": serializers.IntegerField(),
+                    "rating_distribution": serializers.DictField(
+                        child=serializers.IntegerField()
+                    ),
+                    "tags_summary": serializers.ListField(
+                        child=inline_serializer(
+                            name="TagSummaryItem",
+                            fields={
+                                "id": serializers.IntegerField(),
+                                "name": serializers.CharField(),
+                                "category": serializers.CharField(),
+                                "group": serializers.CharField(),
+                                "count": serializers.IntegerField(),
+                            },
+                        )
+                    ),
+                },
+            )
+        },
+        examples=[
+            OpenApiExample(
+                name="Client Summary Example",
+                summary="Successful custom summary response",
+                value={
+                    "average_rating": 3.0,
+                    "total_reviews": 1,
+                    "rating_distribution": {"1": 0, "2": 0, "3": 1, "4": 0, "5": 0},
+                    "tags_summary": [
+                        {
+                            "id": 2,
+                            "name": "Late Payer",
+                            "category": "NEGATIVE",
+                            "group": "Payment",
+                            "count": 1,
+                        },
+                        {
+                            "id": 3,
+                            "name": "Professional & Respectful",
+                            "category": "POSITIVE",
+                            "group": "Behavior",
+                            "count": 1,
+                        },
+                        {
+                            "id": 6,
+                            "name": "Ghosting / Unclear",
+                            "category": "NEGATIVE",
+                            "group": "Communication",
+                            "count": 1,
+                        },
+                    ],
+                },
+                response_only=True,
+                status_codes=["200"],
+            )
+        ],
     ),
     my_review=extend_schema(
         tags=["Reviews"],

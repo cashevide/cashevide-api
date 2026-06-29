@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.generics import RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -14,8 +14,8 @@ from .serializers import LegalDocumentAcceptanceSerializer, LegalDocumentSeriali
 
 @LEGAL_VIEW_SCHEMA
 class LatestLegalDocumentView(RetrieveAPIView):
+    permission_classes = [AllowAny]
     serializer_class = LegalDocumentSerializer
-    permission_classes = []
 
     def get_object(self):
         doc_type = self.kwargs.get("doc_type")
