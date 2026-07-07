@@ -248,9 +248,29 @@ USER_BUSINESS_PROFILE_SCHEMA = extend_schema_view(
     ),
 )
 
+
+VERIFY_REFERRAL_SCHEMA = extend_schema_view(
+    get=extend_schema(
+        tags=["Authentication"],
+        summary="Verify Referral Code",
+        description="Checks whether a given referral code is valid and exists in the database. \n\n"
+        "Returns `is_valid: true` if the code exists and matches exactly (Case-Sensitive). "
+        "Returns `is_valid: false` with a 400 status if the code is invalid or missing.",
+        parameters=[
+            OpenApiParameter(
+                name="code",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="The referral code you want to validate. (e.g., AC1KLR). Note: It is case-sensitive.",
+                required=True,
+            ),
+        ],
+    )
+)
+
 USER_CHECK_FIELD_SCHEMA = extend_schema_view(
     get=extend_schema(
-        tags=["Users"],
+        tags=["Authentication"],
         summary="Check Field Availability",
         description="Checks whether a specific field (like 'username' or 'email') is already taken in the database. \n\n"
         "Returns `is_available: true` if the value is not taken and can be used. "

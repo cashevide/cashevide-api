@@ -5,12 +5,13 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.models import User
+from users.models import User, UserProfile
 from users.schema import (
     PASSWORD_CHANGE_SCHEMA,
     PASSWORD_RESET_SCHEMA,
     USER_CHECK_FIELD_SCHEMA,
     USER_DELETE_SCHEMA,
+    VERIFY_REFERRAL_SCHEMA,
 )
 from users.serializers.password import (
     PasswordChangeSerializer,
@@ -19,6 +20,45 @@ from users.serializers.password import (
 from users.utils import clear_auth_session
 
 logger = logging.getLogger(__name__)
+
+
+@VERIFY_REFERRAL_SCHEMA
+class VerifyReferralView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        code = request.query_params.get("code", "").strip()
+
+        if not code:
+            return Response(
+                {"is_valid": False, "message": "Referral code is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            referral_code = UserProfile.objects.filter(referral_code=code).first()
+
+            if not referral_code:
+                return Response(
+                    {
+                        "is_valid": False,
+                        "message": "Invalid referral code",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            return Response(
+                {
+                    "is_valid": True,
+                    "message": "Referral code is valid",
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception:
+            return Response(
+                {"error": "An unexpected error occurred. Please try again later."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 @USER_CHECK_FIELD_SCHEMA

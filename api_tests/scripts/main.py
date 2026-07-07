@@ -115,6 +115,6 @@ class Review(APITest):
 auth = Auth()
 auth.login(email="noufal@email.com", password="noufal")
 
-review = Review()
-review.get_clients()
-review.post_tags()
+# review = Review()
+# review.get_clients()
+# review.post_tags()

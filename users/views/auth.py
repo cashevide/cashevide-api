@@ -109,8 +109,11 @@ class UserSignupView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
+            validated_data = serializer.validated_data
+
+            platform = validated_data.get("platform")
+
             user = serializer.save()
-            platform = request.data.get("platform", "mobile")
 
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
@@ -138,7 +141,7 @@ class LoginView(APIView):
             validated_data = serializer.validated_data
 
             user = validated_data.get("user")
-            platform = validated_data.get("platform", "mobile")
+            platform = validated_data.get("platform")
 
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)

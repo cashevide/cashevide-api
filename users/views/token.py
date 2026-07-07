@@ -41,9 +41,11 @@ class CustomTokenRefreshView(TokenRefreshView):
                 {"error": "Invalid or expired refresh token"},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
+
         validated_data = serializer.validated_data
         access_token = validated_data.get("access")
         new_refresh_token = validated_data.get("refresh", refresh_token)
+
         if platform == "web":
             response = Response(
                 {"message": "Token refreshed successfully"}, status=status.HTTP_200_OK

@@ -1,0 +1,43 @@
+### Check field exist
+
+GET {{base_url}}/users/check-user/?field=username&value=test20
+Content-Type: application/json
+
+
+### Check referral code exist
+
+GET {{base_url}}/users/check-referral-code/?code=NOUFAL
+Content-Type: application/json
+
+### Change Password
+
+POST {{base_url}}/users/change-password/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "current_password": "passowrd123",
+  "new_password": "password1x3"
+}
+
+
+### Reset Password
+
+POST {{base_url}}/users/reset-password/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "new_password": "noufal123"
+}
+
+
+### Delete Account
+
+DELETE {{base_url}}/users/profile/delete/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "refresh": "{{refresh}}"
+}

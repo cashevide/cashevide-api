@@ -5,6 +5,7 @@ from users.views.account import (
     PasswordChangeView,
     PasswordResetView,
     UserDeleteView,
+    VerifyReferralView,
 )
 from users.views.auth import GoogleAuthView, LoginView, LogoutView, UserSignupView
 from users.views.otp import (
@@ -32,6 +33,7 @@ urlpatterns = [
     ),
     path("profile/delete/", UserDeleteView.as_view(), name="user_delete"),
     path("check-user/", CheckFieldExistsView.as_view(), name="check_user"),
+    path("check-referral-code/", VerifyReferralView.as_view(), name="verify-referral"),
     path("login/", LoginView.as_view(), name="login"),
     path("google/", GoogleAuthView.as_view(), name="google_login"),
     path("token/refresh/", CustomTokenRefreshView.as_view(), name="token_refresh"),
