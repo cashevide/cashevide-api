@@ -1,6 +1,8 @@
+import phonenumbers
 from rest_framework import serializers
 
 from .models import Review, ReviewedClient, Tag
+from .utils import hash_phone_number
 
 
 class ReviewedClientSerializer(serializers.ModelSerializer):
@@ -8,6 +10,12 @@ class ReviewedClientSerializer(serializers.ModelSerializer):
         model = ReviewedClient
         fields = ["id", "phone_number", "created_at", "updated_at", "is_active"]
         read_only_fields = ["created_at", "updated_at"]
+
+    def validate_phone_number(self, value):
+        try:
+            return hash_phone_number(value)
+        except (phonenumbers.NumberParseException, ValueError):
+            raise serializers.ValidationError("Invalid phone number format")
 
 
 class ClientLookupSerializer(serializers.Serializer):

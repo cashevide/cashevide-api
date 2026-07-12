@@ -86,71 +86,73 @@ class TelegramWebhookAPIView(APIView):
     def post(self, request, *args, **kwargs):
 
         update = request.data
+        message = update.get("message")
 
-        if "message" in update:
-            chat_id = update["message"]["chat"]["id"]
-            name = update["message"]["from"]["first_name"]
-            text = update["message"].get("text", "").strip()
+        if message:
+            chat_id = message.get("chat", {}).get("id")
+            name = message.get("from", {}).get("first_name", "there")
+            text = message.get("text", "").strip()
             text_lower = text.lower()
 
-            reply_markup = None
+            if chat_id:
+                reply_markup = None
 
-            # 1. When the user clicks the 'Start' button for the first time
-            if text_lower == "/start":
-                reply = (
-                    f"👋 *Hi {name}!*\n\n"
-                    "Send your LinkedIn, GitHub, Behance, or portfolio link "
-                    "to get your *Referral Code*.\n\n"
-                )
-
-            # 2. Check if the input contains a valid profile link
-            elif validate_profile_link(text_lower):
-                # Fallback safety check for referral code
-                if REFERRAL_CODE:
+                # 1. When the user clicks the 'Start' button for the first time
+                if text_lower == "/start":
                     reply = (
-                        "✅ Profile verified!\n\n"
-                        "Your referral code:\n\n"
-                        f"*{REFERRAL_CODE}*\n\n"
-                        "Tap the button below to copy it and use it during signup."
+                        f"👋 *Hi {name}!*\n\n"
+                        "Send your LinkedIn, GitHub, Behance, or portfolio link "
+                        "to get your *Referral Code*.\n\n"
                     )
 
-                    reply_markup = {
-                        "inline_keyboard": [
-                            [
-                                {
-                                    "text": "Copy Referral Code",
-                                    "copy_text": {"text": REFERRAL_CODE},
-                                }
-                            ]
-                        ]
-                    }
+                # 2. Check if the input contains a valid profile link
+                elif validate_profile_link(text_lower):
+                    # Fallback safety check for referral code
+                    if REFERRAL_CODE:
+                        reply = (
+                            "✅ Profile verified!\n\n"
+                            "Your referral code:\n\n"
+                            f"*{REFERRAL_CODE}*\n\n"
+                            "Tap the button below to copy it and use it during signup."
+                        )
 
+                        reply_markup = {
+                            "inline_keyboard": [
+                                [
+                                    {
+                                        "text": "Copy Referral Code",
+                                        "copy_text": {"text": REFERRAL_CODE},
+                                    }
+                                ]
+                            ]
+                        }
+
+                    else:
+                        reply = (
+                            "⚠️ Referral codes are temporarily unavailable.\n\n"
+                            "Please try again later."
+                        )
+
+                # 3. Fallback for messages without a valid link
                 else:
                     reply = (
-                        "⚠️ Referral codes are temporarily unavailable.\n\n"
-                        "Please try again later."
+                        "❌ I couldn't find a valid profile link.\n\n"
+                        "Send your LinkedIn, GitHub, Behance, or portfolio link.\n\n"
                     )
 
-            # 3. Fallback for messages without a valid link
-            else:
-                reply = (
-                    "❌ I couldn't find a valid profile link.\n\n"
-                    "Send your LinkedIn, GitHub, Behance, or portfolio link.\n\n"
-                )
+                payload = {
+                    "chat_id": chat_id,
+                    "text": reply,
+                    "parse_mode": "Markdown",
+                }
 
-            payload = {
-                "chat_id": chat_id,
-                "text": reply,
-                "parse_mode": "Markdown",
-            }
+                if reply_markup:
+                    payload["reply_markup"] = reply_markup
 
-            if reply_markup:
-                payload["reply_markup"] = reply_markup
+                try:
+                    requests.post(TELEGRAM_API_URL, json=payload, timeout=10)
 
-            try:
-                requests.post(TELEGRAM_API_URL, json=payload, timeout=10)
-
-            except Exception as e:
-                print(f"Telegram Error: {e}")
+                except Exception as e:
+                    print(f"Telegram Error: {e}")
 
         return Response({"status": "ok"}, status=status.HTTP_200_OK)

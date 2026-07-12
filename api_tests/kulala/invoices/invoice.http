@@ -26,25 +26,15 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "client": 2,
-  "discount": "400",
-  "due_date": "2026-05-21",
-  "issue_date": "2026-05-21",
+  "name": "Test Client",
+  "email": "test@example.com",
+  "phone": "+919876543210",
+  "currency": "INR",
+  "status": "DRAFT",
   "items": [
-    {
-      "product": 5,
-      "unit_price": "500.00"
-    },
-    {
-      "product": 4
-    }
+    {"title": "Test Item", "quantity": "1", "unit_price": "150.00", "unit_type": "QTY"}
   ],
-  "payments": [
-    {
-      "amount": "300.00",
-      "payment_date": "2026-05-21"
-    }
-  ]
+  "payments": []
 }
 
 

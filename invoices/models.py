@@ -46,13 +46,23 @@ class Invoice(BaseModel):
     issue_date = models.DateField(null=True, blank=True)
     due_date = models.DateField(null=True, blank=True)
 
-    subtotal = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    discount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    subtotal = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0.00")
+    )
+    discount = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0.00")
+    )
+    total_amount = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0.00")
+    )
 
-    amount_paid = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    amount_paid = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0.00")
+    )
 
-    balance_due = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    balance_due = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0.00")
+    )
 
     class Meta:
         constraints = [
@@ -176,7 +186,9 @@ class InvoiceItem(BaseModel):
         max_length=4, choices=UnitType.choices, default=UnitType.QUANTITY
     )
 
-    quantity = models.DecimalField(max_digits=12, decimal_places=2, default=1.00)
+    quantity = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("1.00")
+    )
 
     unit_price = models.DecimalField(
         max_digits=12, decimal_places=2, blank=True, null=True

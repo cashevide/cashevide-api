@@ -2,6 +2,7 @@ import uuid
 
 import phonenumbers
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -21,14 +22,8 @@ class ReviewedClient(BaseModel):
         if not self.phone_number.startswith("sha256$"):
             try:
                 self.phone_number = hash_phone_number(self.phone_number)
-            except phonenumbers.NumberParseException:
-                raise ValueError("Invalid phone number format")
-
-            except ValueError as ve:
-                raise ve
-
-            except Exception as e:
-                raise ValueError(f"Error processing number: {e}")
+            except (phonenumbers.NumberParseException, ValueError) as e:
+                raise ValidationError(f"Invalid phone number: {e}") from e
 
         super().save(*args, **kwargs)
 

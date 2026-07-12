@@ -1,12 +1,12 @@
 ### Check field exist
 
-GET {{base_url}}/users/check-user/?field=username&value=test20
+GET {{base_url}}/users/check-user/?field=username&value=test2
 Content-Type: application/json
 
 
 ### Check referral code exist
 
-GET {{base_url}}/users/check-referral-code/?code=NOUFAL
+GET {{base_url}}/users/check-referral-code/?code
 Content-Type: application/json
 
 ### Change Password
