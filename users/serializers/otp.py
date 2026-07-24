@@ -45,8 +45,15 @@ class BaseOTPVerificationSerializer(serializers.Serializer):
                     {"otp": "Too many attempts. OTP blocked. Please request a new OTP."}
                 )
 
+            remaining = 5 - new_attempts
+            attempt_word = "attempt" if remaining == 1 else "attempts"
             raise serializers.ValidationError(
-                {"otp": "The provided OTP is invalid. Please try again."}
+                {
+                    "otp": (
+                        "The provided OTP is invalid. "
+                        f"{remaining} {attempt_word} remaining."
+                    )
+                }
             )
 
         cache.set(f"{self.cache_prefix}_verified_{email}", True, timeout=900)

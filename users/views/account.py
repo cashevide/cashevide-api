@@ -44,7 +44,7 @@ class VerifyReferralView(APIView):
                         "is_valid": False,
                         "message": "Invalid referral code",
                     },
-                    status=status.HTTP_400_BAD_REQUEST,
+                    status=status.HTTP_200_OK,
                 )
 
             return Response(
