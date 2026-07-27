@@ -16,8 +16,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "current_password": "passowrd123",
-  "new_password": "password1x3"
+  "current_password": "noufalka123",
+  "new_password": "weak"
 }
 
 

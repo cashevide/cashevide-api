@@ -12,6 +12,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     has_pending_agreements = serializers.SerializerMethodField()
     pending_legal_docs = serializers.SerializerMethodField()
 
+    has_password = serializers.SerializerMethodField()
+
     class Meta:
         model = UserProfile
         fields = [
@@ -27,6 +29,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "credit_points",
             "has_pending_agreements",
             "pending_legal_docs",
+            "has_password",
         ]
 
         read_only_fields = [
@@ -35,6 +38,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "credit_points",
             "has_pending_agreements",
             "pending_legal_docs",
+            "has_password",
         ]
 
         extra_kwargs = {
@@ -73,6 +77,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             ]
 
         return []
+
+    def get_has_password(self, obj):
+        return obj.user.has_usable_password()
 
 
 class UserBusinessProfileSerializer(serializers.ModelSerializer):

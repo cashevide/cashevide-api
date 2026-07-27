@@ -7,20 +7,29 @@ from users.models import User
 
 
 class PasswordChangeSerializer(serializers.Serializer):
-    current_password = serializers.CharField(write_only=True)
+    current_password = serializers.CharField(write_only=True, required=False)
     new_password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
     )
     refresh = serializers.CharField(write_only=True, required=False)
 
-    def validate_current_password(self, value):
-
+    def validate(self, attrs):
         user = self.context["request"].user
 
-        if not user.check_password(value):
-            raise serializers.ValidationError({"detail": "Invalid current password."})
+        current_password = attrs.get("current_password")
 
-        return value
+        if user.has_usable_password():
+            if not current_password:
+                raise serializers.ValidationError(
+                    {"detail": "Current password is required."}
+                )
+
+            if not user.check_password(current_password):
+                raise serializers.ValidationError(
+                    {"detail": "Invalid current password."}
+                )
+
+        return attrs
 
     def save(self, **kwargs):
         user = self.context["request"].user
