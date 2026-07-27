@@ -13,7 +13,19 @@ class ReviewedClientSerializer(serializers.ModelSerializer):
 
     def validate_phone_number(self, value):
         try:
-            return hash_phone_number(value)
+            hashed_phone_number = hash_phone_number(value)
+            queryset = ReviewedClient.objects.filter(phone_number=hashed_phone_number)
+
+            if self.instance:
+                queryset = queryset.exclude(pk=self.instance.pk)
+
+            if queryset.exists():
+                raise serializers.ValidationError(
+                    "A reviewed client with this phone number already exists."
+                )
+
+            return hashed_phone_number
+
         except (phonenumbers.NumberParseException, ValueError):
             raise serializers.ValidationError("Invalid phone number format")
 

@@ -35,7 +35,7 @@ Content-Type: application/json
 
 {
   "email": "test@email.com",
-  "password": "madavana123",
+  "password": "noufalka123",
   "platform": "mobile"
 }
 
