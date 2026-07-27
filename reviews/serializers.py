@@ -10,21 +10,11 @@ class ReviewedClientSerializer(serializers.ModelSerializer):
         model = ReviewedClient
         fields = ["id", "phone_number", "created_at", "updated_at", "is_active"]
         read_only_fields = ["created_at", "updated_at"]
+        extra_kwargs = {"phone_number": {"validators": []}}
 
     def validate_phone_number(self, value):
         try:
-            hashed_phone_number = hash_phone_number(value)
-            queryset = ReviewedClient.objects.filter(phone_number=hashed_phone_number)
-
-            if self.instance:
-                queryset = queryset.exclude(pk=self.instance.pk)
-
-            if queryset.exists():
-                raise serializers.ValidationError(
-                    "A reviewed client with this phone number already exists."
-                )
-
-            return hashed_phone_number
+            return hash_phone_number(value)
 
         except (phonenumbers.NumberParseException, ValueError):
             raise serializers.ValidationError("Invalid phone number format")

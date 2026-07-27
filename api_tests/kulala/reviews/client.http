@@ -5,7 +5,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "phone_number": "+919746934318"
+  "phone_number": "+919751469214"
 }
 
 

@@ -56,6 +56,24 @@ class ReviewedClientViewSet(viewsets.ModelViewSet):
 
         return [permission() for permission in permission_classes]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            validated_data = serializer.validated_data
+            hashed_phone_number = validated_data.get("phone_number")
+
+            reviewed_client, created = ReviewedClient.objects.get_or_create(
+                phone_number=hashed_phone_number
+            )
+
+            serializer = self.get_serializer(reviewed_client)
+            status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+
+            return Response(serializer.data, status=status_code)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
