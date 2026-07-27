@@ -6,7 +6,11 @@ from drf_spectacular.utils import (
 )
 from rest_framework import serializers
 
-from .serializers import ClientLookupSerializer, ReviewSerializer
+from .serializers import (
+    ClientLookupSerializer,
+    ReviewedClientSerializer,
+    ReviewSerializer,
+)
 
 TAG_VIEWSET_SCHEMA = extend_schema_view(
     list=extend_schema(
@@ -38,8 +42,12 @@ CLIENT_VIEWSET_SCHEMA = extend_schema_view(
     ),
     create=extend_schema(
         tags=["Reviewed Clients"],
-        summary="Create a new client",
-        description="Allow users to add a new client (business) if it's not already in the system before they write a review.",
+        summary="Create or get an existing client",
+        description="Get an existing client or create a new client using phone number before posting a review.",
+        responses={
+            200: ReviewedClientSerializer,
+            201: ReviewedClientSerializer,
+        },
     ),
     update=extend_schema(
         tags=["Reviewed Clients"], summary="Update client details (Superuser only)"
