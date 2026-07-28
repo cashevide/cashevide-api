@@ -5,9 +5,14 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "phone_number": "+919751469214"
+  "phone_number": "+919751469213"
 }
 
+> {%
+
+  client.global.set("reviewed_client_id", response.body.id )
+
+%}
 
 ### GET Clients
 
@@ -37,7 +42,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "phone_number": "+919746469318"
+  "phone_number": "+919751469214"
 }
 
 > {%

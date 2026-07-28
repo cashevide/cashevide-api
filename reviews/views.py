@@ -239,7 +239,3 @@ class UserReviewViewSet(viewsets.ModelViewSet):
             {"detail": "Use client endpoint to create reviews."},
             status=status.HTTP_400_BAD_REQUEST,
         )
-
-    def perform_destroy(self, instance):
-        instance.is_active = False
-        instance.save()
