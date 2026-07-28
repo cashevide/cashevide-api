@@ -20,5 +20,6 @@ class Product(BaseModel):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = generate_unique_slug(Product, self.title)
+        if not self.slug:
+            self.slug = generate_unique_slug(Product, self.title)
         super().save(*args, **kwargs)

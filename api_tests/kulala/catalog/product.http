@@ -7,7 +7,20 @@ Authorization: Bearer {{token}}
 
 ### Retrive Product
 
-GET {{base_url}}/products/social-media-poster/ HTTP/1.1
+GET {{base_url}}/products/social-media-poster-2/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+> {%
+
+  client.global.set("product_slug", response.body.slug )
+
+%}
+
+
+### GET Product Usage
+
+GET {{base_url}}/products/usage/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -24,15 +37,22 @@ Authorization: Bearer {{token}}
 }
 
 
+### PATCH Product
+
+PATCH {{base_url}}/products/{{product_slug}}/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Social Media",
+}
+
+
+
 ### DELETE Product
 
-DELETE {{base_url}}/products/social-media-poster/ HTTP/1.1
+DELETE {{base_url}}/products/{{product_slug}}/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
-### GET Product Usage
-
-GET {{base_url}}/products/usage/ HTTP/1.1
-Content-Type: application/json
-Authorization: Bearer {{token}}
