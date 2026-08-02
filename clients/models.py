@@ -15,6 +15,8 @@ class Client(BaseModel):
     address = models.TextField(blank=True, default="")
     slug = models.SlugField(unique=True, blank=True)
 
+    is_archived = models.BooleanField(default=False, db_index=True)
+
     def __str__(self):
         return self.name
 
