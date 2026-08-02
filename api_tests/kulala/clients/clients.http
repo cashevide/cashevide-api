@@ -1,13 +1,13 @@
 ### GET Clients
 
-GET {{base_url}}/clients/ HTTP/1.1
+GET {{base_url}}/clients/?is_archived=true HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
 ### GET Client
 
-GET {{base_url}}/clients/ali-2/ HTTP/1.1
+GET {{base_url}}/clients/sibi/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -32,9 +32,9 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "address": "Madavana",
-  "email": "mohammed@email.com",
-  "name": "ali",
+  "address": "idukki",
+  "email": "appu@email.com",
+  "name": "appu",
   "phone": "9746469318"
 }
 
@@ -46,7 +46,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "mohammed noufal",
+  "is_archived": false
 }
 
 

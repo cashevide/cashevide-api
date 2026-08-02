@@ -9,7 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 from core.utils import get_usage_metadata
 
 
-class BaseViewSet(ModelViewSet):
+class BaseResourceViewSet(ModelViewSet):
     queryset = None
     serializer_class = None
     limits_dict: dict = {}
@@ -40,13 +40,23 @@ class BaseViewSet(ModelViewSet):
     def get_queryset(self):
         if self.queryset is None:
             raise ImproperlyConfigured(
-                "BaseViewSet needs a queryset. Define it in your child viewset."
+                "BaseResourceViewSet needs a queryset. Define it in your child viewset."
             )
 
         queryset = self.queryset.filter(user=self.request.user)
 
         if self.action in self.actions_to_filter:
-            return queryset.filter(is_active=True)
+            queryset = queryset.filter(is_active=True)
+
+        if self.action == "usage":
+            return queryset.filter(is_archived=False)
+
+        if self.action == "list":
+            is_archived_param = self.request.query_params.get("is_archived")
+            if is_archived_param and is_archived_param.lower() == "true":
+                return queryset.filter(is_archived=True)
+
+            return queryset.filter(is_archived=False)
 
         return queryset
 

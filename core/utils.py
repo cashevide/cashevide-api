@@ -34,15 +34,19 @@ def process_image(image_field, format: Literal["jpg", "png"], max_size: int):
     image_field.save(file_name, ContentFile(buffer.getvalue()), save=False)
 
 
-def check_creation_limit(user, model_class, limits_dict: dict, item_name: str) -> None:
-    current_count = model_class.objects.filter(user=user, is_active=True).count()
+def check_tier_limit(
+    user, model_class, limits_dict: dict, action: str, item_name: str
+) -> None:
+    current_count = model_class.objects.filter(
+        user=user, is_active=True, is_archived=False
+    ).count()
     user_tier = user.tier
 
     if user_tier in limits_dict:
         max_allowed = limits_dict[user_tier]
         if current_count >= max_allowed:
             raise serializers.ValidationError(
-                f"You cannot create more than {max_allowed} {item_name}"
+                f"You cannot {action} more than {max_allowed} {item_name}"
                 f" in {user_tier} plan"
             )
 
