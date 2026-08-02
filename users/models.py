@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from core.utils import process_image
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -41,6 +43,12 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.email
 
+    def save(self, *args, **kwargs):
+        if self.profile_picture and not self.profile_picture._committed:
+            process_image(self.profile_picture, format="jpg", max_size=512)
+
+        return super().save(*args, **kwargs)
+
 
 class UserBusinessProfile(models.Model):
     user = models.OneToOneField(
@@ -59,6 +67,12 @@ class UserBusinessProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.business_name}"
+
+    def save(self, *args, **kwargs):
+        if self.logo and not self.logo._committed:
+            process_image(self.logo, format="png", max_size=512)
+
+        return super().save(*args, **kwargs)
 
 
 class UserSubscription(models.Model):

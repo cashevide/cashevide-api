@@ -12,9 +12,9 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
-### GET Invoices
+### GET Invoice
 
-GET {{base_url}}/invoices/26/ HTTP/1.1
+GET {{base_url}}/invoices/1/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -40,7 +40,7 @@ Authorization: Bearer {{token}}
 
 ### PUT Invoices
 
-PUT {{base_url}}/invoices/26/ HTTP/1.1
+PUT {{base_url}}/invoices/1/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -51,7 +51,7 @@ Authorization: Bearer {{token}}
   "issue_date": "2026-05-21",
   "items": [
     {
-      "product": 5,
+      "product": 1,
       "quantity":2
     },
     {

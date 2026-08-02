@@ -1,6 +1,37 @@
+import io
+from typing import Literal
+
+from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.text import slugify
+from PIL import Image
 from rest_framework import serializers
+
+
+def process_image(image_field, format: Literal["jpg", "png"], max_size: int):
+
+    img = Image.open(image_field)
+
+    if format == "jpg":
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
+        save_options = {"format": "JPEG", "quality": 85}
+
+    elif format == "png":
+        if img.mode not in ("RGB", "RGBA"):
+            img = img.convert("RGBA")
+
+        save_options = {"format": "PNG", "optimize": True}
+
+    img.thumbnail((max_size, max_size))
+
+    buffer = io.BytesIO()
+    img.save(buffer, **save_options)
+    buffer.seek(0)
+
+    file_name = image_field.name.rsplit(".", 1)[0] + f".{format}"
+    image_field.save(file_name, ContentFile(buffer.getvalue()), save=False)
 
 
 def check_creation_limit(user, model_class, limits_dict: dict, item_name: str) -> None:
@@ -11,7 +42,8 @@ def check_creation_limit(user, model_class, limits_dict: dict, item_name: str) -
         max_allowed = limits_dict[user_tier]
         if current_count >= max_allowed:
             raise serializers.ValidationError(
-                f"You cannot create more than {max_allowed} {item_name} in {user_tier} plan"
+                f"You cannot create more than {max_allowed} {item_name}"
+                f" in {user_tier} plan"
             )
 
 
