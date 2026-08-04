@@ -1,13 +1,13 @@
 ### GET Products
 
-GET {{base_url}}/products/ HTTP/1.1
+GET {{base_url}}/products/?is_archived=false HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
 ### Retrive Product
 
-GET {{base_url}}/products/social-media-poster-2/ HTTP/1.1
+GET {{base_url}}/products/logo/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -32,8 +32,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "Social Media Poster",
-  "unit_price": "500"
+  "title": "brochure",
+  "unit_price": "300"
 }
 
 
@@ -44,7 +44,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "Social Media",
+  "is_archived": false,
+  "unit_price":6000
 }
 
 
