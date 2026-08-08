@@ -14,7 +14,7 @@ Authorization: Bearer {{token}}
 
 ### GET Invoice
 
-GET {{base_url}}/invoices/1/ HTTP/1.1
+GET {{base_url}}/invoices/35/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -40,13 +40,13 @@ Authorization: Bearer {{token}}
 
 ### PUT Invoices
 
-PUT {{base_url}}/invoices/1/ HTTP/1.1
+PUT {{base_url}}/invoices/35/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "client": 2,
-  "discount": "600",
+  "discount": "3300",
   "due_date": "2026-05-28",
   "issue_date": "2026-05-21",
   "items": [
