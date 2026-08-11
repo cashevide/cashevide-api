@@ -8,7 +8,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      # Check if the database is ready to accept connections
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
@@ -18,17 +17,15 @@ services:
   web:
     build: .
     volumes:
-      - static_volume:/app/staticfiles
+      - /srv/static-files/cashevide:/app/staticfiles
       - media_volume:/app/media
     env_file:
       - .env
     environment:
-      # Use the service name 'db' as the database host
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
       - XDG_CACHE_HOME=/tmp
     depends_on:
       db:
-        # Wait for the database healthcheck to pass before starting the web service
         condition: service_healthy
       redis:
         condition: service_started
@@ -49,7 +46,6 @@ services:
 
 volumes:
   postgres_data:
-  static_volume:
   media_volume:
   redis_data:
 
