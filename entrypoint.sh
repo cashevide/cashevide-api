@@ -16,6 +16,12 @@ python manage.py migrate --noinput
 # Collect static files
 python manage.py collectstatic --noinput
 
+# Create Superuser
+if [ "$DJANGO_SUPERUSER_USERNAME" ]; then
+  echo "Creating superuser..."
+  python manage.py createsuperuser --noinput || echo "Superuser already exists."
+fi
+
 # Execute the command specified in Dockerfile or Compose (e.g., Gunicorn/Runserver)
 echo "Starting Gunicorn..."
 exec "$@"
