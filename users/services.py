@@ -2,6 +2,7 @@ from django.core.cache import cache
 from django.db import transaction
 from django.db.models import F
 
+from core.utils import get_content_file_from_url
 from legal.models import LegalDocument, UserLegalDocumentAcceptance
 
 from .models import User, UserBusinessProfile, UserProfile, UserSubscription
@@ -19,6 +20,7 @@ def create_user_account(validated_data, referrer_profile=None):
 
     validated_data.pop("referral_code_input", None)
     full_name = validated_data.pop("full_name")
+    profile_picture_url = validated_data.pop("profile_picture_url", None)
     validated_data.pop("platform", "mobile")
 
     user = User.objects.create_user(**validated_data)
@@ -33,10 +35,12 @@ def create_user_account(validated_data, referrer_profile=None):
         referred_by_user = referrer_profile.user
 
     referral_code = generate_unique_referral_code()
+    profile_picture = get_content_file_from_url(profile_picture_url)
 
     UserProfile.objects.create(
         user=user,
         full_name=full_name,
+        profile_picture=profile_picture,
         referral_code=referral_code,
         referred_by=referred_by_user,
         credit_points=initial_credits,

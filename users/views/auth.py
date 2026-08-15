@@ -47,6 +47,7 @@ class GoogleAuthView(APIView):
                 email = id_info.get("email")
                 first_name = id_info.get("given_name", "")
                 last_name = id_info.get("family_name", "")
+                profile_picture_url = id_info.get("picture")
 
             except ValueError:
                 return Response(
@@ -78,6 +79,7 @@ class GoogleAuthView(APIView):
                     "email": email,
                     "username": username,
                     "full_name": f"{first_name} {last_name}",
+                    "profile_picture_url": profile_picture_url,
                 }
                 referrer_profile = getattr(serializer, "referrer_profile", None)
 

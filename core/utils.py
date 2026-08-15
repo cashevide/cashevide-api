@@ -1,11 +1,26 @@
 import io
 from typing import Literal
 
+import requests
 from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.text import slugify
 from PIL import Image
 from rest_framework import serializers
+
+
+def get_content_file_from_url(url):
+    if not url:
+        return None
+
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+
+    except requests.RequestException:
+        return None
+
+    return ContentFile(response.content, name="profile.jpg")
 
 
 def process_image(image_field, format: Literal["jpg", "png"], max_size: int):
