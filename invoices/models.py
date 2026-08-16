@@ -64,6 +64,8 @@ class Invoice(BaseModel):
         max_digits=12, decimal_places=2, default=Decimal("0.00")
     )
 
+    template = models.CharField(max_length=20, default="classic")
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

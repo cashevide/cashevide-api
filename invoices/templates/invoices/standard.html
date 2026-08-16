@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invoice {{ invoice.invoice_number }}</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        color: #222;
+        margin: 0;
+        padding: 0;
+      }
+      .wrapper {
+        display: table;
+        width: 100%;
+      }
+      .sidebar {
+        display: table-cell;
+        width: 220px;
+        background: #1a1a1a;
+        color: #fff;
+        padding: 30px 20px;
+        vertical-align: top;
+      }
+      .sidebar .logo {
+        max-width: 140px;
+        max-height: 70px;
+        margin-bottom: 20px;
+        background: #fff;
+        border-radius: 4px;
+        padding: 6px;
+      }
+      .sidebar h2 {
+        font-size: 16px;
+        margin: 0 0 10px 0;
+      }
+      .sidebar p {
+        font-size: 12px;
+        line-height: 1.6;
+        color: #ccc;
+      }
+      .sidebar .label {
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: #888;
+        margin-top: 20px;
+        margin-bottom: 4px;
+      }
+      .main {
+        display: table-cell;
+        padding: 30px;
+        vertical-align: top;
+      }
+      .invoice-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 16px;
+        margin-bottom: 20px;
+      }
+      .invoice-title h1 {
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: 1px;
+      }
+      .invoice-meta {
+        text-align: right;
+        font-size: 13px;
+        color: #555;
+      }
+      .bill-to {
+        margin-bottom: 24px;
+      }
+      .bill-to .label {
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 6px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th {
+        text-align: left;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #888;
+        padding: 8px 10px;
+        border-bottom: 2px solid #eee;
+      }
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 13px;
+      }
+      .totals {
+        width: 260px;
+        margin-left: auto;
+        font-size: 13px;
+      }
+      .totals table td {
+        border-bottom: none;
+        padding: 6px 10px;
+      }
+      .totals .grand-total td {
+        border-top: 2px solid #333;
+        font-weight: bold;
+        font-size: 16px;
+        padding-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="sidebar">
+        {% if business_profile and business_profile.logo %}
+        <img
+          src="{{ business_profile.logo.url }}"
+          class="logo"
+          alt="Company Logo"
+        />
+        {% endif %}
+        <h2>
+          {{ business_profile.business_name|default:invoice.user.username }}
+        </h2>
+        <p>
+          {{ business_profile.address }}<br />
+          {{ business_profile.phone_number }}<br />
+          {{ invoice.user.email }}
+        </p>
+        {% if business_profile.gst_number %}
+        <div class="label">GST</div>
+        <p>{{ business_profile.gst_number }}</p>
+        {% endif %} {% if business_profile.vat_number %}
+        <div class="label">VAT</div>
+        <p>{{ business_profile.vat_number }}</p>
+        {% endif %}
+
+        <div class="label">Billed To</div>
+        <p>
+          <strong>{{ invoice.name }}</strong><br />
+          {{ invoice.address }}<br />
+          {{ invoice.email }}<br />
+          {{ invoice.phone }}
+        </p>
+      </div>
+
+      <div class="main">
+        <div class="invoice-title">
+          <h1>Invoice</h1>
+          <div class="invoice-meta">
+            <p><strong>No:</strong> {{ invoice.invoice_number }}</p>
+            <p><strong>Issued:</strong> {{ invoice.issue_date }}</p>
+            <p><strong>Due:</strong> {{ invoice.due_date }}</p>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Description</th>
+              <th>Qty/Hrs</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ item.title }}</td>
+              <td>{{ item.description }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ invoice.currency }} {{ item.unit_price }}</td>
+              <td>{{ invoice.currency }} {{ item.total }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="totals">
+          <table>
+            <tr>
+              <td>Subtotal</td>
+              <td style="text-align: right">
+                {{ invoice.currency }} {{ invoice.subtotal }}
+              </td>
+            </tr>
+            <tr>
+              <td>Discount</td>
+              <td style="text-align: right">
+                {{ invoice.currency }} {{ invoice.discount }}
+              </td>
+            </tr>
+            <tr class="grand-total">
+              <td>Total</td>
+              <td style="text-align: right">
+                {{ invoice.currency }} {{ invoice.total_amount }}
+              </td>
+            </tr>
+            <tr>
+              <td>Amount Paid</td>
+              <td style="text-align: right">
+                {{ invoice.currency }} {{ invoice.amount_paid }}
+              </td>
+            </tr>
+            <tr>
+              <td>Balance Due</td>
+              <td style="text-align: right">
+                {{ invoice.currency }} {{ invoice.balance_due }}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

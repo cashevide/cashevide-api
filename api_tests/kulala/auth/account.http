@@ -9,6 +9,7 @@ Content-Type: application/json
 GET {{base_url}}/users/check-referral-code/?code
 Content-Type: application/json
 
+
 ### Change Password
 
 POST {{base_url}}/users/change-password/ HTTP/1.1

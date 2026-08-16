@@ -1,6 +1,7 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
     OpenApiExample,
+    OpenApiParameter,
     extend_schema,
     extend_schema_view,
     inline_serializer,
@@ -43,6 +44,15 @@ INVOICE_VIEWSET_SCHEMA = extend_schema_view(
         summary="Download invoice as PDF",
         description="Generates and returns a professional PDF version of the invoice dynamically without saving it on the server.",
         responses={(200, "application/pdf"): OpenApiTypes.BINARY},
+        parameters=[
+            OpenApiParameter(
+                name="requested_template",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description="The name of the field to check. Allowed values: `username`, `email`.",
+                required=False,
+            )
+        ],
     ),
     dashboard_analytics=extend_schema(
         tags=["Invoices"],

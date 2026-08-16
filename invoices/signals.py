@@ -6,7 +6,7 @@ from users.models import UserSubscription
 
 from .models import Invoice
 
-ENABLE_CREDIT_DEDUCTION = False
+ENABLE_CREDIT_DEDUCTION = True
 
 
 @receiver(post_save, sender=Invoice)
@@ -18,7 +18,10 @@ def deduct_credit_on_invoice_creation(sender, instance, created, **kwargs):
     if not hasattr(instance.user, "profile"):
         return
 
-    if instance.user.tier == UserSubscription.Tier.COMMUNITY:
+    if (
+        instance.user.tier == UserSubscription.Tier.COMMUNITY
+        and instance.template != "classic"
+    ):
         user_profile = instance.user.profile
         user_profile.credit_points = F("credit_points") - 1
         user_profile.save(update_fields=["credit_points"])

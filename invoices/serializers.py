@@ -1,8 +1,15 @@
+from pathlib import Path
+
 from django.db import transaction
 from rest_framework import serializers
 
 from invoices.models import Invoice, InvoiceItem, PaymentRecord
 from users.models import UserProfile, UserSubscription
+
+template_dir = Path(__file__).resolve().parent / "templates" / "invoices"
+ALLOWED_TEMPLATES = [
+    item.stem for item in template_dir.iterdir() if item.suffix == ".html"
+]
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
@@ -51,7 +58,7 @@ class PaymentRecordSerializer(serializers.ModelSerializer):
         extra_kwargs = {"invoice": {"required": False}}
 
 
-class InvoiceSerialzer(serializers.ModelSerializer):
+class InvoiceSerializer(serializers.ModelSerializer):
     items = InvoiceItemSerializer(many=True)
     payments = PaymentRecordSerializer(many=True)
 
@@ -77,6 +84,7 @@ class InvoiceSerialzer(serializers.ModelSerializer):
             "amount_paid",
             "balance_due",
             "payments",
+            "template",
             "created_at",
             "updated_at",
             "is_active",
@@ -93,6 +101,21 @@ class InvoiceSerialzer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def validate_template(self, value):
+
+        if value not in ALLOWED_TEMPLATES:
+            raise serializers.ValidationError(
+                f"'{value}' is not a valid template. Choose from:"
+                f" {', '.join(ALLOWED_TEMPLATES)}."
+            )
+
+        if self.instance and self.instance.template != value:
+            raise serializers.ValidationError(
+                "Template cannot be changed once the invoice is created."
+            )
+
+        return value
 
     @transaction.atomic
     def create(self, validated_data):

@@ -14,7 +14,7 @@ Authorization: Bearer {{token}}
 
 ### GET Invoice
 
-GET {{base_url}}/invoices/35/ HTTP/1.1
+GET {{base_url}}/invoices/3/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -34,9 +34,27 @@ Authorization: Bearer {{token}}
   "items": [
     {"title": "Test Item", "quantity": "1", "unit_price": "150.00", "unit_type": "QTY"}
   ],
-  "payments": []
+  "payments": [],
+  "template": "standard"
 }
 
+### PUT Invoices
+
+PUT {{base_url}}/invoices/11/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "client": 2,
+  "discount": "3300",
+  "due_date": "2026-05-28",
+  "issue_date": "2026-05-21",
+  "template":"classic",
+  "items": [
+  ],
+  "payments": [
+  ]
+}
 
 ### PUT Invoices
 

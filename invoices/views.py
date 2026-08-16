@@ -11,7 +11,7 @@ from weasyprint import HTML
 from .filters import InvoiceFilter
 from .models import Invoice, PaymentRecord
 from .schema import INVOICE_VIEWSET_SCHEMA
-from .serializers import InvoiceSerialzer
+from .serializers import InvoiceSerializer
 from .utils import (
     DashboardDates,
     PDFRenderer,
@@ -23,7 +23,7 @@ from .utils import (
 @INVOICE_VIEWSET_SCHEMA
 class InvoiceViewSet(ModelViewSet):
     queryset = Invoice.objects.all()
-    serializer_class = InvoiceSerialzer
+    serializer_class = InvoiceSerializer
     permission_classes = [IsAuthenticated]
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -81,7 +81,7 @@ class InvoiceViewSet(ModelViewSet):
             "business_profile": business_profile,
         }
 
-        html_string = render_to_string("invoices/invoice_pdf.html", context)
+        html_string = render_to_string(f"invoices/{invoice.template}.html", context)
 
         pdf_file = HTML(
             string=html_string, base_url=request.build_absolute_uri()
