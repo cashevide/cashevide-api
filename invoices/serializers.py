@@ -121,7 +121,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context.get("request").user  # type:ignore
 
-        if user.tier == UserSubscription.Tier.COMMUNITY:
+        if (
+            user.tier == UserSubscription.Tier.COMMUNITY
+            and validated_data.get("template") != "classic"
+        ):
             user_profile = UserProfile.objects.select_for_update().get(user=user)
 
             if user_profile.credit_points <= 0:
