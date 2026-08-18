@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django_filters.rest_framework import DjangoFilterBackend
@@ -75,10 +76,13 @@ class InvoiceViewSet(ModelViewSet):
 
         business_profile = getattr(user, "business_profile", None)
 
+        fonts_dir = settings.BASE_DIR / "invoices" / "static" / "invoices" / "fonts"
+
         context = {
             "invoice": invoice,
             "items": invoice.items.all(),
             "business_profile": business_profile,
+            "fonts_dir": f"file://{fonts_dir}",
         }
 
         html_string = render_to_string(f"invoices/{invoice.template}.html", context)
