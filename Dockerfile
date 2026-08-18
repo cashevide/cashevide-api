@@ -11,8 +11,9 @@ RUN apt-get update && apt-get install -y \
   zlib1g-dev \
   libffi-dev \
   netcat-openbsd \
-  pango1.0-tools \
-  libcairo2-dev\
+  libcairo2 \
+  libpango-1.0-0 \
+  libpangocairo-1.0-0 \
   libglib2.0-0 \
   libgdk-pixbuf-2.0-0 \
   fontconfig \
