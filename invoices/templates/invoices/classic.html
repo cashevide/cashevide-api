@@ -11,24 +11,25 @@
       }
 
       @font-face {
-          font-family: "Poppins";
-          src: url('{{ fonts_dir }}/Poppins-Regular.ttf') format("truetype");
-          font-weight: 400;
+        font-family: "Poppins";
+        src: url("{{ fonts_dir }}/Poppins-Regular.ttf") format("truetype");
+        font-weight: 400;
       }
       @font-face {
-          font-family: "Poppins";
-          src: url('{{ fonts_dir }}/Poppins-SemiBold.ttf') format("truetype");
-          font-weight: 600;
+        font-family: "Poppins";
+        src: url("{{ fonts_dir }}/Poppins-SemiBold.ttf") format("truetype");
+        font-weight: 600;
       }
       @font-face {
-          font-family: "Poppins";
-          src: url('{{ fonts_dir }}/Poppins-Bold.ttf') format("truetype");
-          font-weight: 700;
+        font-family: "Poppins";
+        src: url("{{ fonts_dir }}/Poppins-Bold.ttf") format("truetype");
+        font-weight: 700;
       }
       @font-face {
-          font-family: "Orange Avenue DEMO";
-          src: url('{{ fonts_dir }}/OrangeAvenueDEMO-Regular.otf') format("opentype");
-          font-weight: 400;
+        font-family: "Orange Avenue DEMO";
+        src: url("{{ fonts_dir }}/OrangeAvenueDEMO-Regular.otf")
+          format("opentype");
+        font-weight: 400;
       }
 
       * {
@@ -51,51 +52,137 @@
       .invoice-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24pt;
+        align-items: flex-end;
+        margin-bottom: 11.5mm;
       }
 
       .logo {
-        height: 40pt;
+        max-width: 160pt;
+        max-height: 55pt;
         width: auto;
+        height: auto;
+        object-fit: contain;
       }
 
       .invoice-title {
         font-family: "Orange Avenue DEMO", serif;
-        font-size: 48pt;
+        font-size: 73pt;
         font-weight: 400;
         color: var(--color-heading);
+        line-height: 1;
+        margin-bottom: -20pt;
+      }
+
+      .company-meta {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 20pt;
+      }
+
+      .company-info {
+          display: flex;
+          flex-direction: column;
+      }
+
+      .company-name {
+          font-size: 14pt;
+          font-weight: 700;
+          color: var(--color-heading);
+          text-transform: uppercase;
+          margin-bottom: 6pt;
+          max-width: 320pt;
+          white-space: nowrap;
+      }
+
+      .company-address {
+          font-size: 12pt;
+          color: var(--color-text);
+          overflow-wrap: break-word;
+          max-width: 220pt;
+          margin-bottom: 6pt;
+      }
+
+      .company-email {
+          font-size: 12pt;
+          color: var(--color-text);
+          overflow-wrap: break-word;
+          max-width: 220pt;
+          margin-bottom: 4pt;
+      }
+
+      .company-phone {
+          font-size: 13pt;
+          font-weight: 700;
+          color: var(--color-text);
+          overflow-wrap: break-word;
+          max-width: 220pt;
+      }
+
+      .invoice-meta {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 4pt;
+      }
+
+      .invoice-number {
+          font-size: 12pt;
+      }
+
+      .invoice-number span {
+          font-weight: 700;
+      }
+
+      .issue-date,
+      .due-date {
+          font-size: 12pt;
+          color: var(--color-text);
       }
     </style>
   </head>
   <body>
     <header class="invoice-header">
-      <img class="logo" src="" alt="logo" />
+      {% if business_profile and business_profile.logo %}
+      <img class="logo" src="{{ business_profile.logo.url }}" alt="logo" />
+      {% endif %}
       <h1 class="invoice-title">Invoice</h1>
     </header>
 
     <section class="company-meta">
       <div class="company-info">
-        <p class="company-name">DECKBYTE DIGITAL SOLUTIONS</p>
-        <p class="company-address">
-          Kodungallur, Thrissur, Kerala, India, 680666
+        <p class="company-name">
+          {{ business_profile.business_name|default:invoice.user.username }}
         </p>
-        <p class="company-email">noufal@email.com</p>
-        <p class="company-phone">+91 95628 66814</p>
+        {% if business_profile.address %}
+        <p class="company-address">{{ business_profile.address }}</p>
+        {% endif %} {% if business_profile.business_email %}
+        <p class="company-email">{{ business_profile.business_email }}</p>
+        {% endif %} {% if business_profile.phone_number %}
+        <p class="company-phone">{{ business_profile.phone_number }}</p>
+        {% endif %}
       </div>
       <div class="invoice-meta">
-        <p class="invoice-number">Invoice No.: <span>85652312</span></p>
-        <p class="issue-date">Issue Date: 11-05-2025</p>
-        <p class="due-date">Due Date: 11-05-2025</p>
+        <p class="invoice-number">
+          Invoice No.: <span>{{ invoice.invoice_number }}</span>
+        </p>
+        <p class="issue-date">
+          Issue Date: {{ invoice.issue_date|date:"d-m-Y"|default:"—" }}
+        </p>
+        <p class="due-date">
+          Due Date: {{ invoice.due_date|date:"d-m-Y"|default:"—" }}
+        </p>
       </div>
     </section>
 
     <section class="bill-to">
       <p class="bill-to-label">BILL TO:</p>
-      <p class="client-name">Tamara Resto Bar</p>
-      <p class="client-address">Thrissur, Kodungallur Kerala</p>
-      <p class="client-address">India, 680666</p>
-      <p class="client-phone">+91 974646 9319</p>
+      <p class="client-name">{{ invoice.name }}</p>
+      {% if invoice.address %}
+      <p class="client-address">{{ invoice.address }}</p>
+      {% endif %} {% if invoice.phone %}
+      <p class="client-phone">{{ invoice.phone }}</p>
+      {% endif %}
     </section>
 
     <section class="item-table">
@@ -109,12 +196,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Website</td>
-            <td>1</td>
-            <td>49,000</td>
-            <td>49,000</td>
-          </tr>
+          {% for item in items %}
+            <tr>
+              <td>{{ item.title }}</td>
+              <td>
+                {{ item.quantity }}
+                {% if item.unit_type != "QTY" %}{{ item.get_unit_type_display }}{% endif %}
+              </td>
+              <td>{{ invoice.currency }} {{ item.unit_price }}</td>
+              <td>{{ invoice.currency }} {{ item.total }}</td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
     </section>
@@ -122,24 +214,27 @@
     <section class="totals">
       <div class="totals-row">
         <span>Subtotal</span>
-        <span>49,000</span>
+        <span>{{ invoice.currency }} {{ invoice.subtotal }}</span>
       </div>
+      {% if invoice.amount_paid > 0 %}
       <div class="totals-row">
         <span>Advance Amount</span>
-        <span>49,000</span>
+        <span>{{ invoice.currency }} {{ invoice.amount_paid }}</span>
       </div>
+      {% endif %} {% if invoice.discount > 0 %}
       <div class="totals-row">
         <span>Discount</span>
-        <span>49,000</span>
+        <span>- {{ invoice.currency }} {{ invoice.discount }}</span>
       </div>
+      {% endif %}
       <div class="totals-row total-amount">
         <span>Total amount</span>
-        <span>₹49,000</span>
+        <span>{{ invoice.currency }} {{ invoice.total_amount }}</span>
       </div>
     </section>
 
     <footer class="invoice-footer">
-      <p>www.deckbyte.in</p>
+      <p>{{ business_profile.website|default:"" }}</p>
     </footer>
   </body>
 </html>
