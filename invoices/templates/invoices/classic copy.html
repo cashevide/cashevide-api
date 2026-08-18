@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice {{ invoice.invoice_number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 18mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            color: #222;
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        /* ---- Header: logo + business details ---- */
+        .header {
+            width: 100%;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .header td {
+            vertical-align: top;
+        }
+
+        .header td.header-right {
+            text-align: right;
+        }
+
+        .logo {
+            max-width: 150px;
+            max-height: 80px;
+        }
+
+        .company-details {
+            text-align: right;
+        }
+
+        .company-details h2 {
+            margin: 0 0 6px 0;
+            font-size: 14pt;
+        }
+
+        .company-details p {
+            margin: 0;
+            font-size: 9.5pt;
+            line-height: 1.5;
+            color: #444;
+        }
+
+        /* ---- Invoice meta + Bill To ---- */
+        .meta-section {
+            width: 100%;
+            margin-bottom: 28px;
+        }
+
+        .meta-section td {
+            vertical-align: top;
+            width: 50%;
+        }
+
+        .invoice-title h1 {
+            margin: 0 0 12px 0;
+            font-size: 20pt;
+            letter-spacing: 1px;
+        }
+
+        .invoice-title table td {
+            padding: 2px 0;
+            font-size: 10pt;
+        }
+
+        .invoice-title table td:first-child {
+            color: #555;
+            padding-right: 16px;
+            white-space: nowrap;
+        }
+
+        .status-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 3px 10px;
+            font-size: 9pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #999;
+        }
+
+        .bill-to {
+            text-align: right;
+        }
+
+        .bill-to h3 {
+            margin: 0 0 8px 0;
+            font-size: 10pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+
+        .bill-to p {
+            margin: 0;
+            font-size: 10pt;
+            line-height: 1.6;
+        }
+
+        /* ---- Line items table ---- */
+        .items-table {
+            margin-bottom: 4px;
+        }
+
+        .items-table thead th {
+            text-align: left;
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+            padding: 8px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .items-table tbody td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 10pt;
+            vertical-align: top;
+        }
+
+        .items-table .col-qty,
+        .items-table .col-price,
+        .items-table .col-total,
+        .items-table thead th.col-qty,
+        .items-table thead th.col-price,
+        .items-table thead th.col-total {
+            text-align: right;
+        }
+
+        .items-table .item-description {
+            display: block;
+            font-size: 9pt;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* Repeat table header across page breaks */
+        .items-table thead {
+            display: table-header-group;
+        }
+
+        .items-table tr {
+            page-break-inside: avoid;
+        }
+
+        /* ---- Totals ---- */
+        .totals-wrapper {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .totals-table {
+            width: 280px;
+            margin-left: auto;
+        }
+
+        .totals-table td {
+            padding: 5px 0;
+            font-size: 10pt;
+        }
+
+        .totals-table td:first-child {
+            color: #555;
+        }
+
+        .totals-table td:last-child {
+            text-align: right;
+        }
+
+        .totals-table .row-total td {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 6px;
+            font-size: 12pt;
+            font-weight: bold;
+        }
+
+        .totals-table .row-balance td {
+            font-weight: bold;project ഇൽ തൊടാതെ 
+        }
+
+        .totals-table .row-balance.balance-zero td {
+            font-weight: normal;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <table class="header">
+        <tr>
+            <td>
+                {% if business_profile and business_profile.logo %}
+                    <img src="{{ business_profile.logo.url }}" class="logo" alt="Company Logo">
+                {% endif %}
+            </td>
+            <td class="header-right">
+                <div class="company-details">
+                    <h2>{{ business_profile.business_name|default:invoice.user.username }}</h2>
+                    <p>
+                        {% if business_profile.address %}{{ business_profile.address }}<br>{% endif %}
+                        {% if business_profile.phone_number %}{{ business_profile.phone_number }}<br>{% endif %}
+                        {{ invoice.user.email }}
+                        {% if business_profile.gst_number %}<br>GST: {{ business_profile.gst_number }}{% endif %}
+                        {% if business_profile.vat_number %}<br>VAT: {{ business_profile.vat_number }}{% endif %}
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="meta-section">
+        <tr>
+            <td>
+                <div class="invoice-title">
+                    <h1>INVOICE</h1>
+                    <table>
+                        <tr>
+                            <td>Invoice Number</td>
+                            <td>{{ invoice.invoice_number }}</td>
+                        </tr>
+                        <tr>
+                            <td>Issue Date</td>
+                            <td>{{ invoice.issue_date|default:"—" }}</td>
+                        </tr>
+                        <tr>
+                            <td>Due Date</td>
+                            <td>{{ invoice.due_date|default:"—" }}</td>
+                        </tr>
+                    </table>
+                    <span class="status-badge">{{ invoice.get_status_display }}</span>
+                </div>
+            </td>
+            <td>
+                <div class="bill-to">
+                    <h3>Bill To</h3>
+                    <p>
+                        <strong>{{ invoice.name }}</strong><br>
+                        {% if invoice.address %}{{ invoice.address }}<br>{% endif %}
+                        {% if invoice.email %}{{ invoice.email }}<br>{% endif %}
+                        {% if invoice.phone %}{{ invoice.phone }}{% endif %}
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th class="col-item">Item</th>
+                <th class="col-qty">Qty/Hrs</th>
+                <th class="col-price">Unit Price</th>
+                <th class="col-total">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td class="col-item">
+                    {{ item.title }}
+                    {% if item.description %}
+                        <span class="item-description">{{ item.description }}</span>
+                    {% endif %}
+                </td>
+                <td class="col-qty">{{ item.quantity }}</td>
+                <td class="col-price">{{ invoice.currency }} {{ item.unit_price }}</td>
+                <td class="col-total">{{ invoice.currency }} {{ item.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals-wrapper">
+        <table class="totals-table" style="margin-left: auto;">
+            <tr>
+                <td>Subtotal</td>
+                <td>{{ invoice.currency }} {{ invoice.subtotal }}</td>
+            </tr>
+            {% if invoice.discount > 0 %}
+            <tr>
+                <td>Discount</td>
+                <td>- {{ invoice.currency }} {{ invoice.discount }}</td>
+            </tr>
+            {% endif %}
+            <tr class="row-total">
+                <td>Total</td>
+                <td>{{ invoice.currency }} {{ invoice.total_amount }}</td>
+            </tr>
+            {% if invoice.amount_paid > 0 %}
+            <tr>
+                <td>Amount Paid</td>
+                <td>{{ invoice.currency }} {{ invoice.amount_paid }}</td>
+            </tr>
+            <tr class="row-balance{% if invoice.balance_due == 0 %} balance-zero{% endif %}">
+                <td>Balance Due</td>
+                <td>{{ invoice.currency }} {{ invoice.balance_due }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+
+</body>
+</html>

@@ -33,13 +33,13 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "address": "address",
-  "business_name": "Cashevide",
+  "address": "Kodassery House, PO Madavana, Kodungallur, Eriyad, Thrissur, 680666",
+  "business_name": "UIkart",
   "currency": "INR",
-  "gst_number": "gst number",
+  "gst_number": "",
   "business_email": "uikart@email.com",
-  "phone_number": "8392483",
-  "vat_number": "Vat3924"
+  "phone_number": "+919746469319",
+  "vat_number": ""
 }
 
 
