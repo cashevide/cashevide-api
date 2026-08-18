@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
   libgdk-pixbuf-2.0-0 \
   fontconfig \
   shared-mime-info \
+  gosu \
   && rm -rf /var/lib/apt/lists/*
 
 # Install uv (high-performance Python package installer)
@@ -41,8 +42,9 @@ COPY --chown=cashevide:cashevide . .
 RUN mkdir -p /app/staticfiles /app/media && \
   chown -R cashevide:cashevide /app/staticfiles /app/media
 
-USER cashevide
-
+# Note: no USER directive here — container starts as root so the
+# entrypoint can fix bind-mount permissions, then drops to
+# cashevide via gosu before running the actual app.
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 8000
