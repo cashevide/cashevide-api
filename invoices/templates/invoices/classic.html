@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -8,16 +9,141 @@
         size: A4;
         margin: 20mm 18mm;
       }
+
+      @font-face {
+        font-family: "Poppins";
+        src: url('{% static "invoices/fonts/Poppins-Regular.ttf" %}')
+          format("truetype");
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: "Poppins";
+        src: url('{% static "invoices/fonts/Poppins-SemiBold.ttf" %}')
+          format("truetype");
+        font-weight: 600;
+      }
+      @font-face {
+        font-family: "Poppins";
+        src: url('{% static "invoices/fonts/Poppins-Bold.ttf" %}')
+          format("truetype");
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: "Orange Avenue DEMO";
+        src: url('{% static "invoices/fonts/OrangeAvenueDEMO-Regular.otf" %}')
+          format("opentype");
+        font-weight: 400;
+      }
+
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
+      :root {
+        --color-card-bg: #f2f2f2;
+        --color-heading: #000000;
+        --color-text: #2d2d2d;
+        --color-white: #ffffff;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        font-size: 12pt;
+        line-height: 1.2;
+        color: var(--color-text);
+      }
+      .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24pt;
+      }
 
+      .logo {
+        height: 40pt;
+        width: auto;
+      }
+
+      .invoice-title {
+        font-family: "Orange Avenue DEMO", serif;
+        font-size: 48pt;
+        font-weight: 400;
+        color: var(--color-heading);
+      }
     </style>
   </head>
   <body>
-    hello
+    <header class="invoice-header">
+      <img class="logo" src="" alt="logo" />
+      <h1 class="invoice-title">Invoice</h1>
+    </header>
+
+    <section class="company-meta">
+      <div class="company-info">
+        <p class="company-name">DECKBYTE DIGITAL SOLUTIONS</p>
+        <p class="company-address">
+          Kodungallur, Thrissur, Kerala, India, 680666
+        </p>
+        <p class="company-email">noufal@email.com</p>
+        <p class="company-phone">+91 95628 66814</p>
+      </div>
+      <div class="invoice-meta">
+        <p class="invoice-number">Invoice No.: <span>85652312</span></p>
+        <p class="issue-date">Issue Date: 11-05-2025</p>
+        <p class="due-date">Due Date: 11-05-2025</p>
+      </div>
+    </section>
+
+    <section class="bill-to">
+      <p class="bill-to-label">BILL TO:</p>
+      <p class="client-name">Tamara Resto Bar</p>
+      <p class="client-address">Thrissur, Kodungallur Kerala</p>
+      <p class="client-address">India, 680666</p>
+      <p class="client-phone">+91 974646 9319</p>
+    </section>
+
+    <section class="item-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ITEM</th>
+            <th>QTY</th>
+            <th>PRICE</th>
+            <th>TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Website</td>
+            <td>1</td>
+            <td>49,000</td>
+            <td>49,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="totals">
+      <div class="totals-row">
+        <span>Subtotal</span>
+        <span>49,000</span>
+      </div>
+      <div class="totals-row">
+        <span>Advance Amount</span>
+        <span>49,000</span>
+      </div>
+      <div class="totals-row">
+        <span>Discount</span>
+        <span>49,000</span>
+      </div>
+      <div class="totals-row total-amount">
+        <span>Total amount</span>
+        <span>₹49,000</span>
+      </div>
+    </section>
+
+    <footer class="invoice-footer">
+      <p>www.deckbyte.in</p>
+    </footer>
   </body>
 </html>
- 
