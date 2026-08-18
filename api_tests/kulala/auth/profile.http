@@ -37,6 +37,7 @@ Authorization: Bearer {{token}}
   "business_name": "Cashevide",
   "currency": "INR",
   "gst_number": "gst number",
+  "business_email": "uikart@email.com",
   "phone_number": "8392483",
   "vat_number": "Vat3924"
 }

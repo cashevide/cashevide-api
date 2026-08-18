@@ -4,7 +4,7 @@ import requests
 
 
 class APITest:
-    base_url = "http://192.168.31.117/api"
+    base_url = "http://192.168.31.117:8000/api"
     tokens = {}
     headers = {
         "Content-Type": "application/json",

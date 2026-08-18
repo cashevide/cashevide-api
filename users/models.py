@@ -62,6 +62,7 @@ class UserBusinessProfile(models.Model):
     vat_number = models.CharField(max_length=15, blank=True, default="")
     address = models.TextField(default="")
     phone_number = models.CharField(max_length=20, default="")
+    business_email = models.EmailField(blank=True, default="")
     website = models.URLField(blank=True, default="")
     currency = models.CharField(max_length=3, default="")
 

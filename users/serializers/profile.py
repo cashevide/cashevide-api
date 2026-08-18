@@ -95,6 +95,7 @@ class UserBusinessProfileSerializer(serializers.ModelSerializer):
             "vat_number",
             "address",
             "phone_number",
+            "business_email",
             "website",
             "currency",
         ]
