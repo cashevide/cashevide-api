@@ -97,6 +97,10 @@ class InvoiceViewSet(ModelViewSet):
             f'attachment; filename="Invoice_{invoice.invoice_number}.pdf"'
         )
 
+        # response["Content-Disposition"] = (
+        #     f'inline; filename="Invoice_{invoice.invoice_number}.pdf"'
+        # )
+
         return response
 
     @action(detail=False, methods=["get"], url_path="dashboard-analytics")

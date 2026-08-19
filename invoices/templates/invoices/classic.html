@@ -139,6 +139,124 @@
           font-size: 12pt;
           color: var(--color-text);
       }
+
+    .bill-to {
+        background-color: var(--color-card-bg);
+        padding: 16pt 18pt;
+        margin-bottom: 20pt;
+    }
+
+    .bill-to-label {
+        font-size: 12pt;
+        font-weight: 700;
+        color: var(--color-heading);
+        margin-bottom: 6pt;
+    }
+
+    .client-name {
+        font-size: 12pt;
+        font-weight: 600;
+        color: var(--color-heading);
+        margin-bottom: 4pt;
+    }
+
+    .client-address {
+        font-size: 12pt;
+        color: var(--color-text);
+        overflow-wrap: break-word;
+        max-width: 240pt;
+        margin-bottom: 6pt;
+    }
+
+    .client-phone {
+        font-size: 13pt;
+        font-weight: 700;
+        color: var(--color-text);
+    }
+    .item-table {
+        margin-bottom: 20pt;
+    }
+
+    .item-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .item-table thead tr {
+        background-color: var(--color-heading);
+    }
+
+    .item-table th {
+        color: var(--color-white);
+        font-size: 12pt;
+        font-weight: 700;
+        text-align: left;
+        padding: 6pt 12pt;
+    }
+
+    .item-table th:nth-child(4) {
+        text-align: right;
+    }
+
+    .item-table td {
+        font-size: 12pt;
+        color: var(--color-text);
+        padding: 10pt 12pt;
+        text-align: left;
+    }
+
+    .item-table td:nth-child(4) {
+        text-align: right;
+    }
+
+    .item-table tbody tr:nth-child(even) {
+        background-color: var(--color-card-bg);
+    }
+    .totals {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6pt;
+        margin-bottom: 20pt;
+    }
+    .totals-row {
+        display: flex;
+        justify-content: space-between;
+        width: 220pt;
+        font-size: 12pt;
+        color: var(--color-text);
+        padding: 0 12pt;
+    }
+    .total-amount {
+        background-color: var(--color-heading);
+        color: var(--color-white);
+        padding: 6pt 12pt;
+        margin-top: 4pt;
+    }
+
+    .total-label {
+        font-weight: 400;
+    }
+
+    .total-value {
+        font-weight: 700;
+    }
+
+    .invoice-footer {
+        background-color: var(--color-heading);
+        padding: 6pt 12pt;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .invoice-footer p {
+        color: var(--color-white);
+        font-size: 11pt;
+    }
+
     </style>
   </head>
   <body>
@@ -228,8 +346,8 @@
       </div>
       {% endif %}
       <div class="totals-row total-amount">
-        <span>Total amount</span>
-        <span>{{ invoice.currency }} {{ invoice.total_amount }}</span>
+          <span class="total-label">Total amount</span>
+          <span class="total-value">{{ invoice.currency }} {{ invoice.total_amount }}</span>
       </div>
     </section>
 
