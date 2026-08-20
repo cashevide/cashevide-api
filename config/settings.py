@@ -72,6 +72,7 @@ if CSRF_TRUSTED_ORIGINS == [""]:
 
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ["Content-Disposition"]
 
 # Application definition
 
