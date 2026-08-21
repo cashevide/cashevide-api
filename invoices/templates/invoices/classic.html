@@ -1,4 +1,5 @@
 {% load static %}
+{% load invoice_extras %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -42,6 +43,7 @@
         --color-heading: #000000;
         --color-text: #2d2d2d;
         --color-white: #ffffff;
+        --bar-height: 24pt;
       }
       body {
         font-family: "Geist", sans-serif;
@@ -200,6 +202,8 @@
         font-weight: 700;
         text-align: left;
         padding: 6pt 12pt;
+        height: var(--bar-height);
+        vertical-align: middle;
     }
 
     .item-table th:nth-child(4) {
@@ -208,8 +212,9 @@
 
     .item-table td {
         font-size: 12pt;
+        line-height: 1;
         color: var(--color-text);
-        padding: 10pt 12pt;
+        padding: 9pt 12pt;
         text-align: left;
     }
 
@@ -240,6 +245,10 @@
         color: var(--color-white);
         padding: 6pt 12pt;
         margin-top: 4pt;
+        height: var(--bar-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .total-label {
@@ -259,6 +268,10 @@
         bottom: 0;
         left: 0;
         right: 0;
+        height: var(--bar-height);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .invoice-footer p {
@@ -327,11 +340,11 @@
             <tr>
               <td>{{ item.title }}</td>
               <td>
-                {{ item.quantity }}
+                {{ item.quantity|trim_decimal }}
                 {% if item.unit_type != "QTY" %}{{ item.get_unit_type_display }}{% endif %}
               </td>
-              <td>{{ invoice.currency }} {{ item.unit_price }}</td>
-              <td>{{ invoice.currency }} {{ item.total }}</td>
+              <td>{{ item.unit_price|trim_decimal }}</td>
+              <td>{{ item.total|trim_decimal }}</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -341,22 +354,22 @@
     <section class="totals">
       <div class="totals-row">
         <span>Subtotal</span>
-        <span>{{ invoice.currency }} {{ invoice.subtotal }}</span>
+        <span>{{ invoice.subtotal|trim_decimal }}</span>
       </div>
       {% if invoice.amount_paid > 0 %}
       <div class="totals-row">
         <span>Advance Amount</span>
-        <span>{{ invoice.currency }} {{ invoice.amount_paid }}</span>
+        <span>{{ invoice.amount_paid|trim_decimal }}</span>
       </div>
       {% endif %} {% if invoice.discount > 0 %}
       <div class="totals-row">
         <span>Discount</span>
-        <span>- {{ invoice.currency }} {{ invoice.discount }}</span>
+        <span>- {{ invoice.discount|trim_decimal }}</span>
       </div>
       {% endif %}
       <div class="totals-row total-amount">
           <span class="total-label">Total amount</span>
-          <span class="total-value">{{ invoice.currency }} {{ invoice.total_amount }}</span>
+          <span class="total-value">{{ invoice.currency }} {{ invoice.total_amount|trim_decimal }}</span>
       </div>
     </section>
 
