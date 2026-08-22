@@ -23,3 +23,17 @@ def strip_scheme(url: str | None) -> str:
 
     url = re.sub(r"^https?://", "", url)
     return url.rstrip("/")
+
+
+CURRENCY_SYMBOLS = {
+    "INR": "₹",
+    "USD": "$",
+}
+
+
+@register.filter(name="currency_symbol")
+def currency_symbol(code: str | None) -> str:
+    if not code:
+        return ""
+    code = code.upper()
+    return CURRENCY_SYMBOLS.get(code, code)

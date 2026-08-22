@@ -5,7 +5,7 @@ from core.utils import check_tier_limit
 from users.models import UserSubscription
 
 PRODUCT_CREATION_LIMITS: dict[str, int] = {
-    UserSubscription.Tier.COMMUNITY: 2,
+    UserSubscription.Tier.COMMUNITY: 50,
     UserSubscription.Tier.INDIVIDUAL: 100,
 }
 

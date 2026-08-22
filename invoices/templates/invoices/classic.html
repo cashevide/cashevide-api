@@ -369,7 +369,7 @@
       {% endif %}
       <div class="totals-row total-amount">
           <span class="total-label">Total amount</span>
-          <span class="total-value">{{ invoice.currency }} {{ invoice.total_amount|trim_decimal }}</span>
+          <span class="total-value">{{ invoice.currency|currency_symbol }} {{ invoice.total_amount|trim_decimal }}</span>
       </div>
     </section>
 
