@@ -358,7 +358,7 @@
       </div>
       {% if invoice.amount_paid > 0 %}
       <div class="totals-row">
-        <span>Advance Amount</span>
+        <span>Amount Paid</span>
         <span>{{ invoice.amount_paid|trim_decimal }}</span>
       </div>
       {% endif %} {% if invoice.discount > 0 %}
@@ -374,7 +374,7 @@
     </section>
 
     <footer class="invoice-footer">
-      <p>{{ business_profile.website|default:"" }}</p>
+      <p>{{ business_profile.website|strip_scheme }}</p>
     </footer>
   </body>
 </html>

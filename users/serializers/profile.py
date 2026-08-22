@@ -85,6 +85,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserBusinessProfileSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source="user.id", read_only=True)
 
+    def to_internal_value(self, data):
+        data = data.copy()
+        website = data.get("website", "")
+
+        if website and not website.startswith(("http://", "https://")):
+            data["website"] = f"https://{website}"
+
+        return super().to_internal_value(data)
+
     class Meta:
         model = UserBusinessProfile
         fields = [
