@@ -4,6 +4,15 @@ from legal.models import LegalDocument
 from users.models import UserBusinessProfile, UserProfile
 
 
+def delete_stale_image(instance, validated_data, field_name):
+    if field_name in validated_data:
+        existing_image = getattr(instance, field_name)
+        incoming_image = validated_data.get(field_name)
+
+        if existing_image and incoming_image != existing_image:
+            existing_image.delete(save=False)
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     username = serializers.CharField(source="user.username", read_only=True)
@@ -81,6 +90,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_has_password(self, obj):
         return obj.user.has_usable_password()
 
+    def update(self, instance, validated_data):
+        delete_stale_image(instance, validated_data, "profile_picture")
+        return super().update(instance, validated_data)
+
 
 class UserBusinessProfileSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source="user.id", read_only=True)
@@ -115,3 +128,7 @@ class UserBusinessProfileSerializer(serializers.ModelSerializer):
             "phone_number": {"required": True, "allow_blank": False},
             "currency": {"required": True, "allow_blank": False},
         }
+
+    def update(self, instance, validated_data):
+        delete_stale_image(instance, validated_data, "logo")
+        return super().update(instance, validated_data)
