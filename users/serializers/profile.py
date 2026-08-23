@@ -7,9 +7,8 @@ from users.models import UserBusinessProfile, UserProfile
 def delete_stale_image(instance, validated_data, field_name):
     if field_name in validated_data:
         existing_image = getattr(instance, field_name)
-        incoming_image = validated_data.get(field_name)
 
-        if existing_image and incoming_image != existing_image:
+        if existing_image:
             existing_image.delete(save=False)
 
 

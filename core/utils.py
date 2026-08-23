@@ -1,4 +1,5 @@
 import io
+import uuid
 from typing import Literal
 
 import requests
@@ -45,7 +46,7 @@ def process_image(image_field, format: Literal["jpg", "png"], max_size: int):
     img.save(buffer, **save_options)
     buffer.seek(0)
 
-    file_name = image_field.name.rsplit(".", 1)[0] + f".{format}"
+    file_name = f"{uuid.uuid4().hex}.{format}"
     image_field.save(file_name, ContentFile(buffer.getvalue()), save=False)
 
 
