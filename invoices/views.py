@@ -93,12 +93,14 @@ class InvoiceViewSet(ModelViewSet):
 
         response = HttpResponse(pdf_file, content_type="application/pdf")
 
-        # response["Content-Disposition"] = (
-        #     f'attachment; filename="{invoice.name}_{invoice.invoice_number}.pdf"'
-        # )
+        content_disposition = "attachment"
+
+        if settings.DEBUG:
+            content_disposition = "inline"
 
         response["Content-Disposition"] = (
-            f'inline; filename="{invoice.name}_{invoice.invoice_number}.pdf"'
+            f"{content_disposition}; "
+            f'filename="{invoice.name}_{invoice.invoice_number}.pdf"'
         )
 
         return response
