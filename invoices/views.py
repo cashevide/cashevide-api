@@ -72,16 +72,12 @@ class InvoiceViewSet(ModelViewSet):
     )
     def download_pdf(self, request, pk=None):
         invoice = self.get_object()
-        user = request.user
-
-        business_profile = getattr(user, "business_profile", None)
 
         fonts_dir = settings.BASE_DIR / "invoices" / "static" / "invoices" / "fonts"
 
         context = {
             "invoice": invoice,
             "items": invoice.items.all(),
-            "business_profile": business_profile,
             "fonts_dir": f"file://{fonts_dir}",
         }
 
