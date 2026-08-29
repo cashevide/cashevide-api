@@ -292,7 +292,7 @@
     <section class="company-meta">
       <div class="company-info">
         <p class="company-name">
-          {{ invoice.business_snapshot.business_name|default:invoice.user.username }}
+          {{ invoice.business_snapshot.business_name }}
         </p>
         {% if invoice.business_snapshot.address %}
         <p class="company-address">{{ invoice.business_snapshot.address }}</p>
