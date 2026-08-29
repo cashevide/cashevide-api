@@ -72,6 +72,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "email",
             "phone",
             "address",
+            "business_snapshot",
             "invoice_number",
             "items",
             "status",
@@ -92,6 +93,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
             "user",
+            "business_snapshot",
             "invoice_number",
             "status",
             "subtotal",
