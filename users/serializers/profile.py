@@ -127,7 +127,3 @@ class UserBusinessProfileSerializer(serializers.ModelSerializer):
             "phone_number": {"required": True, "allow_blank": False},
             "currency": {"required": True, "allow_blank": False},
         }
-
-    def update(self, instance, validated_data):
-        delete_stale_image(instance, validated_data, "logo")
-        return super().update(instance, validated_data)

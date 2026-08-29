@@ -283,8 +283,8 @@
   </head>
   <body>
     <header class="invoice-header">
-      {% if business_profile and business_profile.logo %}
-      <img class="logo" src="{{ business_profile.logo.url }}" alt="logo" />
+      {% if invoice.business_snapshot.logo %}
+      <img class="logo" src="{{ invoice.business_snapshot.logo }}" alt="logo" />
       {% endif %}
       <h1 class="invoice-title">Invoice</h1>
     </header>
@@ -292,14 +292,14 @@
     <section class="company-meta">
       <div class="company-info">
         <p class="company-name">
-          {{ business_profile.business_name|default:invoice.user.username }}
+          {{ invoice.business_snapshot.business_name|default:invoice.user.username }}
         </p>
-        {% if business_profile.address %}
-        <p class="company-address">{{ business_profile.address }}</p>
-        {% endif %} {% if business_profile.business_email %}
-        <p class="company-email">{{ business_profile.business_email }}</p>
-        {% endif %} {% if business_profile.phone_number %}
-        <p class="company-phone">{{ business_profile.phone_number }}</p>
+        {% if invoice.business_snapshot.address %}
+        <p class="company-address">{{ invoice.business_snapshot.address }}</p>
+        {% endif %} {% if invoice.business_snapshot.business_email %}
+        <p class="company-email">{{ invoice.business_snapshot.business_email }}</p>
+        {% endif %} {% if invoice.business_snapshot.phone_number %}
+        <p class="company-phone">{{ invoice.business_snapshot.phone_number }}</p>
         {% endif %}
       </div>
       <div class="invoice-meta">
@@ -379,7 +379,7 @@
     </section>
 
     <footer class="invoice-footer">
-      <p>{{ business_profile.website|strip_scheme }}</p>
+      <p>{{ invoice.business_snapshot.website|strip_scheme }}</p>
     </footer>
   </body>
 </html>

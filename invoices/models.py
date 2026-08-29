@@ -35,6 +35,8 @@ class Invoice(BaseModel):
     phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True, default="")
 
+    business_snapshot = models.JSONField(default=dict, blank=True)
+
     invoice_number = models.CharField(max_length=50, blank=True)
 
     status = models.CharField(
@@ -79,11 +81,25 @@ class Invoice(BaseModel):
     def save(self, *args, **kwargs):
         self.clean()
 
-        if not self.currency:
-            if hasattr(self, "user") and hasattr(self.user, "business_profile"):
-                self.currency = self.user.business_profile.currency
-            else:
-                self.currency = ""
+        if hasattr(self.user, "business_profile"):
+            bp = self.user.business_profile
+
+            if not self.currency:
+                self.currency = bp.currency
+
+            if not self.business_snapshot:
+                self.business_snapshot = {
+                    "business_name": bp.business_name,
+                    "logo": bp.logo.url if bp.logo else "",
+                    "gst_number": bp.gst_number,
+                    "vat_number": bp.vat_number,
+                    "address": bp.address,
+                    "phone_number": bp.phone_number,
+                    "business_email": bp.business_email,
+                    "website": bp.website,
+                }
+        else:
+            self.currency = ""
 
         if not self.invoice_number:
             last_invoice = (
