@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django_cleanup import cleanup
 
 from core.utils import process_image
 
@@ -50,6 +51,7 @@ class UserProfile(models.Model):
         return super().save(*args, **kwargs)
 
 
+@cleanup.ignore
 class UserBusinessProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
