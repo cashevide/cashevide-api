@@ -64,7 +64,7 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
-        margin-bottom: 11.5mm;
+        margin-bottom: 11.64mm;
       }
 
       .logo {
@@ -87,7 +87,7 @@
       .company-meta {
           display: flex;
           justify-content: space-between;
-          align-items: flex-end;
+          align-items: flex-start;
           margin-bottom: 20pt;
       }
 
@@ -109,6 +109,7 @@
 
       .company-address {
           font-size: 12pt;
+          line-height: 14pt;
           color: var(--color-text);
           overflow-wrap: break-word;
           max-width: 220pt;
@@ -120,13 +121,14 @@
           color: var(--color-text);
           overflow-wrap: break-word;
           max-width: 220pt;
-          margin-bottom: 4pt;
+          margin-bottom: 6pt;
       }
 
       .company-phone {
           font-family: "Poppins", sans-serif;
           font-size: 13pt;
           font-weight: 700;
+          line-height: 1;
           color: var(--color-text);
           overflow-wrap: break-word;
           max-width: 220pt;
@@ -152,12 +154,16 @@
       .issue-date,
       .due-date {
           font-size: 12pt;
+          line-height: 1;
           color: var(--color-text);
       }
 
     .bill-to {
-        background-color: var(--color-card-bg);
-        padding: 16pt 18pt;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        background: linear-gradient(90deg, rgba(242, 242, 242, 1) 0%, rgba(242, 242, 242, 0) 100%);
+        padding: 16pt 0 16pt 18pt;
         margin-bottom: 20pt;
     }
 
@@ -189,8 +195,10 @@
         font-family: "Poppins", sans-serif;
         font-size: 13pt;
         font-weight: 700;
+        line-height: 1;
         color: var(--color-text);
     }
+
     .item-table {
         margin-bottom: 20pt;
     }
@@ -310,10 +318,22 @@
           <p class="company-phone">{{ invoice.business_snapshot.phone_number }}</p>
           {% endif %}
         </div>
+        <p class="invoice-number">
+            Invoice No.: <span>{{ invoice.invoice_number }}</span>
+        </p>
+      </section>
+
+      <section class="bill-to">
+        <div class="bill-to-info">
+          <p class="bill-to-label">BILL TO:</p>
+          <p class="client-name">{{ invoice.name }}</p>
+          {% if invoice.address %}
+          <p class="client-address">{{ invoice.address }}</p>
+          {% endif %} {% if invoice.phone %}
+          <p class="client-phone">{{ invoice.phone }}</p>
+          {% endif %}
+        </div>
         <div class="invoice-meta">
-          <p class="invoice-number">
-            <span>{{ invoice.invoice_number }}</span>
-          </p>
           <p class="issue-date">
             Issue Date: {{ invoice.issue_date|date:"d-m-Y"|default:"—" }}
           </p>
@@ -321,16 +341,6 @@
             Due Date: {{ invoice.due_date|date:"d-m-Y"|default:"—" }}
           </p>
         </div>
-      </section>
-
-      <section class="bill-to">
-        <p class="bill-to-label">BILL TO:</p>
-        <p class="client-name">{{ invoice.name }}</p>
-        {% if invoice.address %}
-        <p class="client-address">{{ invoice.address }}</p>
-        {% endif %} {% if invoice.phone %}
-        <p class="client-phone">{{ invoice.phone }}</p>
-        {% endif %}
       </section>
 
       <section class="item-table">
