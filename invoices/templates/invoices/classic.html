@@ -45,11 +45,20 @@
         --color-white: #ffffff;
         --bar-height: 24pt;
       }
+      html, body {
+        height: 100%;
+      }
       body {
         font-family: "Geist", sans-serif;
         font-size: 12pt;
         line-height: 1.2;
         color: var(--color-text);
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+      }
+      .invoice-content {
+        flex: 1 0 auto;
       }
       .invoice-header {
         display: flex;
@@ -95,7 +104,7 @@
           text-transform: uppercase;
           margin-bottom: 6pt;
           max-width: 320pt;
-          white-space: nowrap;
+          overflow-wrap: break-word;
       }
 
       .company-address {
@@ -226,21 +235,21 @@
         background-color: var(--color-card-bg);
     }
     .totals {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 6pt;
         margin-bottom: 20pt;
+        break-inside: avoid;
+        page-break-inside: avoid;
     }
     .totals-row {
         display: flex;
         justify-content: space-between;
         width: 220pt;
+        margin-left: auto;
+        margin-bottom: 6pt;
         font-size: 12pt;
         color: var(--color-text);
         padding: 0 12pt;
     }
-    .total-amount {
+    .balance-due-row {
         background-color: var(--color-heading);
         color: var(--color-white);
         padding: 6pt 12pt;
@@ -264,10 +273,7 @@
         background-color: var(--color-heading);
         padding: 6pt 12pt;
         text-align: center;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        flex-shrink: 0;
         height: var(--bar-height);
         display: flex;
         align-items: center;
@@ -282,101 +288,104 @@
     </style>
   </head>
   <body>
-    <header class="invoice-header">
-      {% if invoice.business_snapshot.logo %}
-      <img class="logo" src="{{ invoice.business_snapshot.logo }}" alt="logo" />
-      {% endif %}
-      <h1 class="invoice-title">Invoice</h1>
-    </header>
 
-    <section class="company-meta">
-      <div class="company-info">
-        <p class="company-name">
-          {{ invoice.business_snapshot.business_name }}
-        </p>
-        {% if invoice.business_snapshot.address %}
-        <p class="company-address">{{ invoice.business_snapshot.address }}</p>
-        {% endif %} {% if invoice.business_snapshot.business_email %}
-        <p class="company-email">{{ invoice.business_snapshot.business_email }}</p>
-        {% endif %} {% if invoice.business_snapshot.phone_number %}
-        <p class="company-phone">{{ invoice.business_snapshot.phone_number }}</p>
+    <div class="invoice-content">
+      <header class="invoice-header">
+        {% if invoice.business_snapshot.logo %}
+        <img class="logo" src="{{ invoice.business_snapshot.logo }}" alt="logo" />
         {% endif %}
-      </div>
-      <div class="invoice-meta">
-        <p class="invoice-number">
-          <span>{{ invoice.invoice_number }}</span>
-        </p>
-        <p class="issue-date">
-          Issue Date: {{ invoice.issue_date|date:"d-m-Y"|default:"—" }}
-        </p>
-        <p class="due-date">
-          Due Date: {{ invoice.due_date|date:"d-m-Y"|default:"—" }}
-        </p>
-      </div>
-    </section>
+        <h1 class="invoice-title">Invoice</h1>
+      </header>
 
-    <section class="bill-to">
-      <p class="bill-to-label">BILL TO:</p>
-      <p class="client-name">{{ invoice.name }}</p>
-      {% if invoice.address %}
-      <p class="client-address">{{ invoice.address }}</p>
-      {% endif %} {% if invoice.phone %}
-      <p class="client-phone">{{ invoice.phone }}</p>
-      {% endif %}
-    </section>
+      <section class="company-meta">
+        <div class="company-info">
+          <p class="company-name">
+            {{ invoice.business_snapshot.business_name }}
+          </p>
+          {% if invoice.business_snapshot.address %}
+          <p class="company-address">{{ invoice.business_snapshot.address }}</p>
+          {% endif %} {% if invoice.business_snapshot.business_email %}
+          <p class="company-email">{{ invoice.business_snapshot.business_email }}</p>
+          {% endif %} {% if invoice.business_snapshot.phone_number %}
+          <p class="company-phone">{{ invoice.business_snapshot.phone_number }}</p>
+          {% endif %}
+        </div>
+        <div class="invoice-meta">
+          <p class="invoice-number">
+            <span>{{ invoice.invoice_number }}</span>
+          </p>
+          <p class="issue-date">
+            Issue Date: {{ invoice.issue_date|date:"d-m-Y"|default:"—" }}
+          </p>
+          <p class="due-date">
+            Due Date: {{ invoice.due_date|date:"d-m-Y"|default:"—" }}
+          </p>
+        </div>
+      </section>
 
-    <section class="item-table">
-      <table>
-        <thead>
-          <tr>
-            <th>ITEM</th>
-            <th>QTY</th>
-            <th>PRICE</th>
-            <th>TOTAL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in items %}
+      <section class="bill-to">
+        <p class="bill-to-label">BILL TO:</p>
+        <p class="client-name">{{ invoice.name }}</p>
+        {% if invoice.address %}
+        <p class="client-address">{{ invoice.address }}</p>
+        {% endif %} {% if invoice.phone %}
+        <p class="client-phone">{{ invoice.phone }}</p>
+        {% endif %}
+      </section>
+
+      <section class="item-table">
+        <table>
+          <thead>
             <tr>
-              <td>{{ item.title }}</td>
-              <td>
-                {{ item.quantity|trim_decimal }}
-                {% if item.unit_type != "QTY" %}{{ item.get_unit_type_display }}{% endif %}
-              </td>
-              <td>{{ item.unit_price|trim_decimal }}</td>
-              <td>{{ item.total|trim_decimal }}</td>
+              <th>ITEM</th>
+              <th>QTY</th>
+              <th>PRICE</th>
+              <th>TOTAL</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </section>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td>{{ item.title }}</td>
+                <td>
+                  {{ item.quantity|trim_decimal }}
+                  {% if item.unit_type != "QTY" %}{{ item.get_unit_type_display }}{% endif %}
+                </td>
+                <td>{{ item.unit_price|trim_decimal }}</td>
+                <td>{{ item.total|trim_decimal }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
 
-    <section class="totals">
-      <div class="totals-row">
-        <span>Subtotal</span>
-        <span>{{ invoice.subtotal|trim_decimal }}</span>
-      </div>
-      {% if invoice.discount > 0 %}
-      <div class="totals-row">
-        <span>Discount</span>
-        <span> {{ invoice.discount|trim_decimal }}</span>
-      </div>
-      {% endif %}
-      <div class="totals-row">
-        <span>Total amount</span>
-        <span>{{ invoice.total_amount|trim_decimal }}</span>
-      </div>
-      {% if invoice.amount_paid > 0 %}
-      <div class="totals-row">
-        <span>Amount Paid</span>
-        <span> {{ invoice.amount_paid|trim_decimal }}</span>
-      </div>
-      {% endif %}
-      <div class="totals-row total-amount">
-        <span class="total-label">Balance Due</span>
-        <span class="total-value">{{ invoice.currency|currency_symbol }} {{ invoice.balance_due|trim_decimal }}</span>
-      </div>
-    </section>
+      <section class="totals">
+        <div class="totals-row">
+          <span>Subtotal</span>
+          <span>{{ invoice.subtotal|trim_decimal }}</span>
+        </div>
+        {% if invoice.discount > 0 %}
+        <div class="totals-row">
+          <span>Discount</span>
+          <span> {{ invoice.discount|trim_decimal }}</span>
+        </div>
+        {% endif %}
+        <div class="totals-row">
+          <span>Total amount</span>
+          <span>{{ invoice.total_amount|trim_decimal }}</span>
+        </div>
+        {% if invoice.amount_paid > 0 %}
+        <div class="totals-row">
+          <span>Amount Paid</span>
+          <span> {{ invoice.amount_paid|trim_decimal }}</span>
+        </div>
+        {% endif %}
+        <div class="totals-row balance-due-row">
+          <span class="total-label">Balance Due</span>
+          <span class="total-value">{{ invoice.currency|currency_symbol }} {{ invoice.balance_due|trim_decimal }}</span>
+        </div>
+      </section>
+    </div>
 
     <footer class="invoice-footer">
       <p>{{ invoice.business_snapshot.website|strip_scheme }}</p>
