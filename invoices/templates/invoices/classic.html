@@ -44,10 +44,13 @@
         --color-text: #2d2d2d;
         --color-white: #ffffff;
         --bar-height: 24pt;
+        --row-height: 28pt;
       }
+
       html, body {
         height: 100%;
       }
+
       body {
         font-family: "Geist", sans-serif;
         font-size: 12pt;
@@ -57,9 +60,11 @@
         flex-direction: column;
         min-height: 100%;
       }
+
       .invoice-content {
         flex: 1 0 auto;
       }
+
       .invoice-header {
         display: flex;
         justify-content: space-between;
@@ -88,7 +93,7 @@
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          margin-bottom: 20pt;
+          margin-bottom: 18pt;
       }
 
       .company-info {
@@ -147,7 +152,7 @@
 
       .invoice-number span {
           font-family: "Poppins", sans-serif;
-          font-size: 14pt;
+          font-size: 12pt;
           font-weight: 700;
       }
 
@@ -164,7 +169,7 @@
         align-items: flex-end;
         background: linear-gradient(90deg, rgba(242, 242, 242, 1) 0%, rgba(242, 242, 242, 0) 100%);
         padding: 16pt 0 16pt 18pt;
-        margin-bottom: 20pt;
+        margin-bottom: 18pt;
     }
 
     .bill-to-label {
@@ -176,15 +181,16 @@
     }
 
     .client-name {
-        font-family: "Poppins", sans-serif;
+        font-family: "Geist", sans-serif;
         font-size: 12pt;
-        font-weight: 600;
-        color: var(--color-heading);
-        margin-bottom: 4pt;
+        font-weight: 400;
+        color: var(--color-text);
+        margin-bottom: 6pt;
     }
 
     .client-address {
         font-size: 12pt;
+        line-height: 14pt;
         color: var(--color-text);
         overflow-wrap: break-word;
         max-width: 240pt;
@@ -192,9 +198,9 @@
     }
 
     .client-phone {
-        font-family: "Poppins", sans-serif;
-        font-size: 13pt;
-        font-weight: 700;
+        font-family: "Geist", sans-serif;
+        font-size: 12pt;
+        font-weight: 400;
         line-height: 1;
         color: var(--color-text);
     }
@@ -231,7 +237,9 @@
         font-size: 12pt;
         line-height: 1;
         color: var(--color-text);
-        padding: 9pt 12pt;
+        padding: 0 12pt;
+        height: var(--row-height);
+        vertical-align: middle;
         text-align: left;
     }
 
@@ -243,7 +251,7 @@
         background-color: var(--color-card-bg);
     }
     .totals {
-        margin-bottom: 20pt;
+        margin-bottom: calc(20pt + var(--bar-height) + 4mm);
         break-inside: avoid;
         page-break-inside: avoid;
     }
