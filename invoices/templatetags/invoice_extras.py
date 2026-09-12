@@ -37,3 +37,22 @@ def currency_symbol(code: str | None) -> str:
         return ""
     code = code.upper()
     return CURRENCY_SYMBOLS.get(code, code)
+
+
+@register.filter(name="pluralize_unit")
+def pluralize_unit(unit_type: str, quantity):
+    if not unit_type or unit_type == "QTY":
+        return ""
+
+    labels = {"HRS": "Hour", "DAYS": "Day"}
+    label = labels.get(unit_type, unit_type)
+
+    try:
+        qty = Decimal(str(quantity))
+    except Exception:
+        qty = Decimal("1")
+
+    if qty == 1:
+        return label
+
+    return f"{label}s"

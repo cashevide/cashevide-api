@@ -224,9 +224,14 @@
         font-size: 12pt;
         font-weight: 700;
         text-align: left;
-        padding: 6pt 12pt;
+        padding: 6pt 8pt;
         height: var(--bar-height);
         vertical-align: middle;
+    }
+
+    .item-table th:nth-child(2),
+    .item-table th:nth-child(3) {
+        text-align: center;
     }
 
     .item-table th:nth-child(4) {
@@ -237,10 +242,15 @@
         font-size: 12pt;
         line-height: 1;
         color: var(--color-text);
-        padding: 0 12pt;
+        padding: 0 8pt;
         height: var(--row-height);
         vertical-align: middle;
         text-align: left;
+    }
+
+    .item-table td:nth-child(2),
+    .item-table td:nth-child(3) {
+        text-align: center;
     }
 
     .item-table td:nth-child(4) {
@@ -262,16 +272,18 @@
         justify-content: space-between;
         width: 220pt;
         margin-left: auto;
-        margin-bottom: 6pt;
+        margin-bottom: 10pt;
         font-size: 12pt;
+        line-height: 1;
         color: var(--color-text);
-        padding: 0 12pt;
+        padding: 0 8pt;
     }
+
     .balance-due-row {
         background-color: var(--color-heading);
         color: var(--color-white);
-        padding: 6pt 12pt;
-        margin-top: 4pt;
+        padding: 6pt 8pt;
+        margin-top: 14pt;
         height: var(--bar-height);
         display: flex;
         align-items: center;
@@ -301,6 +313,7 @@
     .invoice-footer p {
         color: var(--color-white);
         font-size: 11pt;
+        line-height: 1;
     }
 
     </style>
@@ -369,7 +382,7 @@
                 <td>{{ item.title }}</td>
                 <td>
                   {{ item.quantity|trim_decimal }}
-                  {% if item.unit_type != "QTY" %}{{ item.get_unit_type_display }}{% endif %}
+                  {{ item.unit_type|pluralize_unit:item.quantity }}
                 </td>
                 <td>{{ item.unit_price|trim_decimal }}</td>
                 <td>{{ item.total|trim_decimal }}</td>
