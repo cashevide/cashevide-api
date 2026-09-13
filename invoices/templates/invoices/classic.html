@@ -92,7 +92,7 @@
       .company-meta {
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
+          align-items: stretch;
           margin-bottom: 18pt;
       }
 
@@ -150,10 +150,47 @@
           font-size: 12pt;
       }
 
+      .status-badge {
+          display: inline-block;
+          font-family: "Poppins", sans-serif;
+          font-size: 11pt;
+          font-weight: 600;
+          text-transform: uppercase;
+          padding: 4pt 12pt;
+          border-radius: 999pt;
+      }
+
+      .status-draft {
+          background-color: #f3f4f6;
+          color: #4b5563;
+      }
+
+      .status-unpaid {
+          background-color: #fef3c7;
+          color: #b45309;
+      }
+
+      .status-partially_paid {
+          background-color: #dbeafe;
+          color: #1d4ed8;
+      }
+
+      .status-paid {
+          background-color: #dcfce7;
+          color: #15803d;
+      }
+
       .invoice-number span {
           font-family: "Poppins", sans-serif;
           font-size: 12pt;
           font-weight: 700;
+      }
+
+      .invoice-number-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          justify-content: space-between;
       }
 
       .issue-date,
@@ -341,9 +378,14 @@
           <p class="company-phone">{{ invoice.business_snapshot.phone_number }}</p>
           {% endif %}
         </div>
-        <p class="invoice-number">
-            Invoice No.: <span>{{ invoice.invoice_number }}</span>
-        </p>
+        <div class="invoice-number-wrapper">
+          <p class="invoice-number">
+              Invoice No.: <span>{{ invoice.invoice_number }}</span>
+          </p>
+          <span class="status-badge status-{{ invoice.status|lower }}">
+            {{ invoice.get_status_display }}
+          </span>
+        </div>
       </section>
 
       <section class="bill-to">
