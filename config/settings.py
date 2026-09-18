@@ -98,6 +98,7 @@ INSTALLED_APPS = [
     "core",
     "demo",
     "legal",
+    "webhooks",
     "telegram_bot",
     "django_cleanup.apps.CleanupConfig",
 ]

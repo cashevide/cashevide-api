@@ -30,6 +30,7 @@ urlpatterns = [
     path("api/", include("invoices.urls")),
     path("api/legal/", include("legal.urls")),
     path("api/telegram/", include("telegram_bot.urls")),
+    path("api/webhooks/", include("webhooks.urls")),
     # Swagger UI
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

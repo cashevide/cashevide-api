@@ -99,6 +99,12 @@ def generate_otp(length=6):
 
 
 def send_otp_email(email, otp, purpose="signup"):
+    from webhooks.models import SuppressedEmail
+
+    if SuppressedEmail.objects.filter(email=email).exists():
+        logger.warning(f"Skipped sending OTP to suppressed email: {email}")
+        raise ValueError("This email address cannot receive emails at this time.")
+
     subject = "Your Cashevide Verification Code"
 
     if purpose == "password_reset":
