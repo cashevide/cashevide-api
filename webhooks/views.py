@@ -73,7 +73,7 @@ class SESNotificationWebhookView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        logger.info("SNS subscription confirmed successfully.")
+        logger.warning("SNS subscription confirmed successfully.")
         return Response({"status": "subscription confirmed"}, status=status.HTTP_200_OK)
 
     def _handle_notification(self, payload):
@@ -122,7 +122,7 @@ class SESNotificationWebhookView(APIView):
                     "detail": recipient.get("diagnosticCode", ""),
                 },
             )
-            logger.info(f"Suppressed email due to permanent bounce: {email}")
+            logger.warning(f"Suppressed email due to permanent bounce: {email}")
 
     def _process_complaint(self, message):
         complaint = message.get("complaint", {})
@@ -139,4 +139,4 @@ class SESNotificationWebhookView(APIView):
                     "detail": complaint.get("complaintFeedbackType", ""),
                 },
             )
-            logger.info(f"Suppressed email due to complaint: {email}")
+            logger.warning(f"Suppressed email due to complaint: {email}")
