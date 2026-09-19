@@ -8,9 +8,9 @@ from legal.models import LegalDocument, UserLegalDocumentAcceptance
 from .models import User, UserBusinessProfile, UserProfile, UserSubscription
 from .utils import generate_unique_referral_code
 
-SIGNUP_BONUS_CREDITS = 20
-REFEREE_BONUS_CREDITS = 20
-REFERRER_BONUS_CREDITS = 30
+SIGNUP_BONUS_CREDITS = 25
+REFEREE_BONUS_CREDITS = 25
+REFERRER_BONUS_CREDITS = 25
 
 
 @transaction.atomic
